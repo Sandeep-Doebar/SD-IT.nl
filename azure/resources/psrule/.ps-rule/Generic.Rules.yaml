@@ -1,0 +1,13 @@
+---
+# Synopsis: Suppress Rules for Not Available resources
+apiVersion: github.com/microsoft/PSRule/v1
+kind: SuppressionGroup
+metadata:
+  name: 'SuppressTags'
+spec:
+  rule:
+    - Azure.Resource.UseTags
+  if:
+    type: '.'
+    in:
+      - Microsoft.ManagedIdentity/userAssignedIdentities
