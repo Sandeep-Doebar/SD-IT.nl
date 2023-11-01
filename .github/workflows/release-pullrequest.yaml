@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: ${{ fromJson(needs.get-modules-to-publish.outputs.modules) }}
+        module: ${{ fromJson(needs.get-modules.outputs.modules) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
