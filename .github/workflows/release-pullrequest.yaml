@@ -1,0 +1,53 @@
+name: On Pull request
+
+on:
+  #workflow_dispatch:
+  push:
+    branches:
+      - "feature/psrule"
+
+env:
+  deploymentConfigFile: ./azure/configs/config.jsonc
+
+jobs:
+  get-modules:
+    uses: ./.github/workflows/get-modules.yaml
+  scan-modules: 
+    needs: get-modules
+    if: ${{ needs.get-modules.outputs.modules }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.get-modules-to-publish.outputs.modules) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: PSRule validation
+        uses: ./.github/actions/templates/validate-module-psrule
+        with:
+          templateFilePath: ${{ steps.get-module-information.outputs.moduleFilePath }}
+          subscriptionId: ${{ steps.get-module-information.outputs.subscriptionId }}
+          managementGroupId: ${{ steps.get-module-information.outputs.tenantId }}
+          psrulePath: "./infrastructure/azure/_tools/registry/scripts/psrule"
+
+#      - name: Get Module information
+#        uses: ./.github/actions/templates/registry-get-module-information
+#        id: get-module-information
+#        with: 
+#          module: ${{ matrix.module }}
+#          stagingTemplatesFile: ${{ env.stagingTemplatesFile }}
+#          templatesFile: ${{ env.templatesFile }}
+#          deploymentConfigFile: ${{ env.deploymentConfigFile }}
+#      - name: Change module folder path for bash
+#        id: change-folderpath
+#        shell: pwsh
+#        run: |
+#          $currentModuleFolderPath = '${{ steps.get-module-information.outputs.moduleFolderPath }}'
+#          $moduleFolderPath = $currentModuleFolderPath -replace "\\", "/"
+#          Write-Output ('{0}={1}' -f 'moduleFolderPath', $moduleFolderPath) >> $env:GITHUB_OUTPUT
+#      - name: Trivy scan
+#        uses: ./.github/actions/templates/registry-validate-module-trivy
+#        with:
+#          templateFolderPath: ${{ steps.change-folderpath.outputs.moduleFolderPath }}
+
+  
