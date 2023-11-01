@@ -39,7 +39,7 @@ configuration:
   AZURE_BICEP_CHECK_TOOL: true
 
   # Enable automatic expansion of Azure Bicep source files.
-  #AZURE_BICEP_FILE_EXPANSION: true
+  AZURE_BICEP_FILE_EXPANSION: true
 
   # Configures the number of seconds to wait for build Bicep files.
   AZURE_BICEP_FILE_EXPANSION_TIMEOUT: 60
