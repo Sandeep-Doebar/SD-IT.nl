@@ -6,12 +6,6 @@ inputs:
     description: "The path to the template test file"
     required: true
     default: ""
-  subscriptionId:
-    description: "The subscription ID to deploy to"
-    required: false
-  managementGroupId:
-    description: "The management group ID to deploy to"
-    required: false
   psrulePath:
     description: "The path to PSRule configurations"
     required: false
@@ -24,7 +18,7 @@ runs:
     #-----------------------------
     - name: Run PSRule analysis
       uses: microsoft/ps-rule@v2.9.0
-      continue-on-error: false # Setting this whilst PSRule gets bedded in, in this project
+      continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
       with:
         modules: "PSRule.Rules.Azure"
         inputPath: "${{ inputs.moduleFolderPath}}"
