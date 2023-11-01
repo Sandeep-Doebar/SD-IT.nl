@@ -28,10 +28,16 @@ jobs:
         with: 
           module: ${{ matrix.module }}
           deploymentConfigFile: ${{ env.deploymentConfigFile }}
+      - name: Create parameter file
+        uses: ./.github/actions/templates/create-parameter-file
+        id: create-parameter-file
+        with: 
+          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+          deploymentConfigFile: ${{ env.deploymentConfigFile }}
       - name: PSRule validation
         uses: ./.github/actions/templates/validate-module-psrule
         with:
-          templateFilePath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
           #subscriptionId: ${{ steps.get-module-information.outputs.subscriptionId }}
           #managementGroupId: ${{ steps.get-module-information.outputs.tenantId }}
           psrulePath: "./azure/resources/psrule"

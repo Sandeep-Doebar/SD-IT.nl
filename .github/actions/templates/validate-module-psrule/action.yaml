@@ -2,7 +2,7 @@ name: "Execute PSRule module test"
 description: "Execute PSRule module test"
 
 inputs:
-  templateFilePath:
+  moduleFolderPath:
     description: "The path to the template test file"
     required: true
     default: ""
@@ -27,9 +27,9 @@ runs:
       continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
       with:
         modules: "PSRule.Rules.Azure"
-        inputPath: "${{ inputs.templateFilePath}}"
+        inputPath: "${{ inputs.moduleFolderPath}}"
         outputFormat: Csv
-        outputPath: "${{ inputs.templateFilePath}}-PSRule-output.csv"
+        outputPath: "${{ inputs.moduleFolderPath}}-PSRule-output.csv"
         option: "${{ inputs.psrulePath}}/ps-rule.yaml" # Path to PSRule configuration options file
         source: "${{ inputs.psrulePath}}/.ps-rule/" # Path to folder containing suppression rules to use for analysis.
         summary: true # Disabling as taken care in customized task

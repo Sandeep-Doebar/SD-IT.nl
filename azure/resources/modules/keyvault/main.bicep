@@ -6,7 +6,7 @@
 param config object
 
 @description('Required. Check against already existing resources in the resourcegroup')
-param existingResources array
+param existingResources array = []
 
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location

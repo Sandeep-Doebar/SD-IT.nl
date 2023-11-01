@@ -1,3 +1,12 @@
+#
+# PSRule for Azure configuration
+#
+
+# Please see the documentation for all configuration options:
+# https://aka.ms/ps-rule/options
+# https://aka.ms/ps-rule-azure/options
+
+# Configure binding for local rules.
 binding:
   preferTargetInfo: true
   targetType:
@@ -19,17 +28,18 @@ output:
     - 'en-US'
 
 execution:
-  unprocessedObject: Ignore
+  ruleSuppressed: Debug
+  unprocessedObject: Debug
 
 configuration:
-  # Enable Bicep CLI checks.
-  AZURE_BICEP_CHECK_TOOL: true
-
   # Enable automatic expansion of Azure parameter files.
   AZURE_PARAMETER_FILE_EXPANSION: true
 
+  # Enable Bicep CLI checks.
+  AZURE_BICEP_CHECK_TOOL: true
+
   # Enable automatic expansion of Azure Bicep source files.
-  AZURE_BICEP_FILE_EXPANSION: true
+  #AZURE_BICEP_FILE_EXPANSION: true
 
   # Configures the number of seconds to wait for build Bicep files.
   AZURE_BICEP_FILE_EXPANSION_TIMEOUT: 60
