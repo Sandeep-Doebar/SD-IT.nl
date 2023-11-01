@@ -1,7 +1,3 @@
-metadata name = 'Key Vaults'
-metadata description = 'This module deploys key Vault(s).'
-metadata owner = 'DevOps'
-
 // ================ //
 // Parameters       //
 // ================ //
