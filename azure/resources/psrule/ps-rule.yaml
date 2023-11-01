@@ -28,8 +28,8 @@ output:
     - 'en-US'
 
 execution:
-  ruleSuppressed: Debug
-  unprocessedObject: Debug
+  ruleSuppressed: Warn
+  unprocessedObject: Warn
 
 configuration:
   # Enable automatic expansion of Azure parameter files.
