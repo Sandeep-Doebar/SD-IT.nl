@@ -17,7 +17,6 @@ module automationAccount 'modules/automationAccount.bicep' = [for (automationAcc
     location: location
     name: automationAccount.name
     sku: automationAccount.sku
-    publicNetworkAccess: !(contains(config.automationAccount[index], 'publicNetworkAccess')) ? 'Enabled' : automationAccount.publicNetworkAccess
-    alreadyExists: !(contains(existingResources, automationAccount.name)) ? false : true
+    publicNetworkAccess: !(contains(config.automationAccounts[index], 'publicNetworkAccess')) ? true : automationAccount.publicNetworkAccess
   }
 }]

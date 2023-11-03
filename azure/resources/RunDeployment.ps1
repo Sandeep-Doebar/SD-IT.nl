@@ -6,28 +6,26 @@ az login
 #Variables
 [CmdletBinding(PositionalBinding = $False)]
 param (
-    [string]$configFile = "..\configs\tst.jsonc",
+    [string]$initConfigFile = "..\configs\init-tst.jsonc",
+    [string]$mainConfigFile = "..\configs\main-tst.jsonc",
     [string]$bicepMainFile = "main.bicep",
     [string]$bicepInitFile = "init.bicep",
-    [boolean]$runBicepInit = $false
+    [boolean]$runBicepInit = $true
 )
 
 #Stop script if try- catch failes
 $ErrorActionPreference = "Stop"
+$initJsonc = Get-Content -Path $initConfigFile -Raw
+$initJson = $jsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
+$initJson | Out-File -FilePath ./initconfigtemp.json -Encoding utf8
 
-$jsonc = Get-Content -Path $configFile -Raw
+$initConfig = Get-Content ./initconfigtemp.json -Raw | ConvertFrom-Json -Depth 100
+
+$jsonc = Get-Content -Path $mainConfigFile -Raw
 $json = $jsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
 $json | Out-File -FilePath ./configtemp.json -Encoding utf8
 
 $Config = Get-Content ./configtemp.json -Raw | ConvertFrom-Json -Depth 100
-Remove-Item ./configtemp.json
-$getResources = az resource list -g $Config.ResourceGroupName --query "[].name"
-
-$TempFile = (New-TemporaryFile).FullName
-$getResources | Out-File -FilePath $TempFile
-if (!$?) {
-    throw "Unable to retrieve existing resources"
-}
 
 $Components = New-Object System.Collections.Generic.List[System.String]
 
@@ -56,7 +54,7 @@ if($runBicepInit){
                 --resource-group $Config.ResourceGroupName `
                 --subscription $Config.SubscriptionId `
                 --template-file "$($PSScriptRoot)/$($bicepInitFile)" `
-                --parameters "config=`@./configtemp.json" "existingResources=`@$($TempFile)"
+                --parameters "config=`@./initconfigtemp.json"
         
             if (!$?) {
                 throw "Unable to deploy resources"
@@ -73,7 +71,7 @@ $ExecuteDeployment.invoke("Bicep resources", {
         --resource-group $Config.ResourceGroupName `
         --subscription $Config.SubscriptionId `
         --template-file "$($PSScriptRoot)/$($bicepMainFile)" `
-        --parameters "config=`@./configtemp.json" "existingResources=`@$($TempFile)"
+        --parameters "config=`@./configtemp.json"
 
     if (!$?) {
         throw "Unable to deploy resources"
@@ -82,3 +80,5 @@ $ExecuteDeployment.invoke("Bicep resources", {
 
 Write-Host 'Deployment finished. Installed components:' -ForegroundColor Green
 $Components
+
+Remove-Item ./configtemp.json

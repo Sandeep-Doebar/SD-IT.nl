@@ -35,6 +35,8 @@
     "automationAccounts": [
         {
             "name": "teknologi-eur1-tst-aa",
+            "sku": "Free",
+            "publicNetworkAccess": true
         }
     ]
 }
