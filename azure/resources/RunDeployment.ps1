@@ -6,7 +6,7 @@ az login
 #Variables
 [CmdletBinding(PositionalBinding = $False)]
 param (
-    [string]$configFile = ".\configs\config.jsonc",
+    [string]$configFile = "..\configs\tst.jsonc",
     [string]$bicepMainFile = "main.bicep",
     [string]$bicepInitFile = "init.bicep",
     [boolean]$runBicepInit = $false

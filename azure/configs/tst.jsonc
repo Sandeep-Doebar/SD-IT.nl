@@ -1,6 +1,6 @@
 {
-    "tenantId": "656320dd-115c-4f4f-86ec-3e3066ed1432",
-    "subscriptionId": "ba0bdf3c-c58d-4cef-8965-dc60e3f74940",
+    "tenantId": "fd80a716-5196-4d81-983a-797ab580b6f3",
+    "subscriptionId": "533c96f5-a73c-4602-88ea-275a17e37973",
     "resourceGroupName": "teknologi-eur1-tst-rg",
     "keyvaults": [
         {
@@ -30,6 +30,11 @@
         {
             "name": "nsj-euw-prod-mi",
             "ownerOnResourceGroup": true
+        }
+    ],
+    "automationAccounts": [
+        {
+            "name": "teknologi-eur1-tst-aa",
         }
     ]
 }
