@@ -16,7 +16,7 @@ param (
 #Stop script if try- catch failes
 $ErrorActionPreference = "Stop"
 $initJsonc = Get-Content -Path $initConfigFile -Raw
-$initJson = $jsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
+$initJson = $initJsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
 $initJson | Out-File -FilePath ./initconfigtemp.json -Encoding utf8
 
 $initConfig = Get-Content ./initconfigtemp.json -Raw | ConvertFrom-Json -Depth 100
@@ -51,8 +51,8 @@ if($runBicepInit){
     if(Test-Path -Path "$($PSScriptRoot)/$($bicepInitFile)"){
         $ExecuteDeployment.invoke("Bicep resources", {
             az deployment group create `
-                --resource-group $Config.ResourceGroupName `
-                --subscription $Config.SubscriptionId `
+                --resource-group $initConfig.ResourceGroupName `
+                --subscription $initConfig.SubscriptionId `
                 --template-file "$($PSScriptRoot)/$($bicepInitFile)" `
                 --parameters "config=`@./initconfigtemp.json"
         
@@ -81,4 +81,5 @@ $ExecuteDeployment.invoke("Bicep resources", {
 Write-Host 'Deployment finished. Installed components:' -ForegroundColor Green
 $Components
 
+Remove-Item ./initconfigtemp.json
 Remove-Item ./configtemp.json
