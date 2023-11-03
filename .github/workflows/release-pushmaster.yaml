@@ -1,0 +1,26 @@
+name: Release - On push to master
+
+on:
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    - "feature/bicep-acr-management"
+
+env:
+  deploymentConfigFile: ./azure/configs/tst.jsonc
+
+jobs:
+  deploy: 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.get-modules.outputs.modules) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Get Module information
+        uses: ./.github/actions/templates/get-module-information
+        id: get-module-information
+        with: 
+          module: ${{ matrix.module }}
+          deploymentConfigFile: ${{ env.deploymentConfigFile }}

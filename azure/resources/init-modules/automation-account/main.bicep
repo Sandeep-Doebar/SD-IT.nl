@@ -6,17 +6,26 @@
 param config object
 
 @description('Required. Check against already existing resources in the resourcegroup')
-param existingResources array = []
+param existingResources array
 
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location
-  
-module automationAccount 'modules/automationAccount.bicep' = [for (automationAccount, index) in config.automationAccounts: {
-  name: automationAccount.name
+
+
+resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = [for (account, index) in config.automationAccounts: if(contains(config.automationAccounts[index], 'managedIdentity')) {
+  name: account.managedIdentity.name
+  scope: contains(account.managedIdentity, 'resourceGroup') ? resourceGroup(account.managedIdentity.resourceGroup) : resourceGroup()
+}]
+
+module automationAccount 'modules/automation-account.bicep' = [for (account, index) in config.automationAccounts: {
+  name: account.name
   params: {
+    name: account.name
     location: location
-    name: automationAccount.name
-    sku: automationAccount.sku
-    publicNetworkAccess: !(contains(config.automationAccounts[index], 'publicNetworkAccess')) ? true : automationAccount.publicNetworkAccess
+    managedIdentityId: managedIdentity[index].id
+    sku: account.sku
   }
+  dependsOn:[
+    managedIdentity
+  ]
 }]
