@@ -1,0 +1,39 @@
+name: Get modules
+
+on:
+  workflow_call:
+    outputs:
+      modules:
+        description: "The directory of the added or updated modules. Empty if no module was changed."
+        value: ${{ jobs.main.outputs.modules }}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.get-modules.outputs.modules }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Get modules
+        id: get-modules
+        shell: pwsh
+        run: |          
+          try {  
+            $modules = (Get-ChildItem -Path './azure/resources/modules' -Directory).Name
+            switch ($modules.Count) {
+              0 {
+                Write-Host "No changed module found."
+                return ""
+              }
+              default {
+                Write-Verbose "Found $($modules.Count) module(s):" -Verbose
+                $modules | ForEach-Object { Write-Verbose "$_" -Verbose}
+                Write-Output ('{0}={1}' -f 'modules', ($modules | ConvertTo-Json -Compress)) >> $env:GITHUB_OUTPUT
+              }
+            }
+          }
+          catch {
+            Write-Host "Error: $_"
+            exit 1
+          }

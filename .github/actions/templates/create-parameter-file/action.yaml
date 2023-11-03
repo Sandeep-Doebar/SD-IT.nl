@@ -1,0 +1,33 @@
+name: "Create parameter file"
+
+inputs: 
+  moduleFolderPath:
+    description: "The path to the template folder"
+    required: true
+    default: ""
+  deploymentConfigFile:
+    description: "The deployment config file"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create parameter file
+      id: create-param-file
+      shell: pwsh
+      run: |
+        $deploymentConfigFile = '${{ inputs.deploymentConfigFile }}'
+        $deploymentConfigFile = Get-Content $deploymentConfigFile 
+        $config = $deploymentConfigFile -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/' | ConvertFrom-Json
+
+        $newJson = [ordered]@{
+          '$schema'      = 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#'
+          contentVersion = "1.0.0.0"
+          metadata       = @{template = './main.bicep'}
+          parameters     = 
+          @{
+            'config' = @{'value' = $config }
+          }
+        }
+        $paramFile = (Join-Path '${{ inputs.moduleFolderPath }}' "main.parameters.json")
+        Set-Content -Path $paramFile -Value (ConvertTo-Json $newJson -Depth 100) -Confirm:$false
