@@ -1,7 +1,7 @@
 {
     "tenantId": "656320dd-115c-4f4f-86ec-3e3066ed1432",
     "subscriptionId": "ba0bdf3c-c58d-4cef-8965-dc60e3f74940",
-    "resourceGroupName": "<CUSTOMERCODE>-<ENVIRONMENT>-rg",
+    "resourceGroupName": "teknologi-eur1-tst-rg",
     "keyvaults": [
         {
             "name": "nsj-euw-prod-kv",
