@@ -7,18 +7,21 @@ on:
       - "feature/psrule"
 
 env:
-  deploymentConfigFile: ./azure/configs/config.jsonc
+  initConfigFile: ./azure/configs/init-tst.jsonc
+  mainConfigFile: ./azure/configs/main-tst.jsonc
 
 jobs:
-  get-modules:
+  get-init-modules:
     uses: ./.github/workflows/get-modules.yaml
-  scan-modules: 
-    needs: get-modules
-    if: ${{ needs.get-modules.outputs.modules }}
+    with:
+      folder: ./azure/resources/init-modules
+  scan-init-modules: 
+    needs: get-init-modules
+    if: ${{ needs.get-init-modules.outputs.modules }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: ${{ fromJson(needs.get-modules.outputs.modules) }}
+        module: ${{ fromJson(needs.get-init-modules.outputs.modules) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,13 +30,13 @@ jobs:
         id: get-module-information
         with: 
           module: ${{ matrix.module }}
-          deploymentConfigFile: ${{ env.deploymentConfigFile }}
+          stage: init
       - name: Create parameter file
         uses: ./.github/actions/templates/create-parameter-file
         id: create-parameter-file
         with: 
           moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          deploymentConfigFile: ${{ env.deploymentConfigFile }}
+          deploymentConfigFile: ${{ env.initConfigFile }}
       - name: PSRule validation
         uses: ./.github/actions/templates/validate-module-psrule
         with:
@@ -41,6 +44,7 @@ jobs:
           psrulePath: "./azure/resources/psrule"
 
 
+          
 #      - name: Change module folder path for bash
 #        id: change-folderpath
 #        shell: pwsh
