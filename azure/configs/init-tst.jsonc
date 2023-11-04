@@ -14,7 +14,20 @@
             "sku": "Free",
             "managedIdentity":{
                 "name": "teknologi-eur1-tst-mi"
+            },
+            "runbook":{
+                "name": "deleteresources"
+
             }
+        
+        }
+    ],
+    "storageAccounts": [
+        {
+            "name": "teknologieur1tstsa",
+            "sku": "Standard_LRS",
+            "kind": "StorageV2",
+            "containerName": "teknologicontainer"
         }
     ]
 }

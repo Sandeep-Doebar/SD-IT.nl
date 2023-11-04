@@ -26,3 +26,12 @@ module automationAccount 'modules/automation-account.bicep' = [for (account, ind
     managedIdentity
   ]
 }]
+
+module runBook 'modules/runbook.bicep' =  [for (account, index) in config.automationAccounts: {
+  name: account.runbook.name
+  params: {
+    name: account.runbook.name
+    automationAccountName: account.name
+    location: location
+  } 
+}]
