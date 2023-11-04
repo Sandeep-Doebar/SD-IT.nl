@@ -14,14 +14,8 @@ runs:
         enable-AzPSSession: true
     - name: Deploy Azure infra
       id: deploy_step
-      env:
-        environment: ${{ inputs.environment }}
       uses: azure/powershell@v1
       with:
         azPSVersion: "latest"
         inlineScript: |
-          $initConfigFile = ".\azure\configs\init-" + '${{ inputs.environment}}' + ".json"
-          write-output $initConfigFile
-          $mainConfigFile = ".\azure\configs\main-" + '${{ inputs.environment}}' + ".json"
-          write-output $mainConfigFile
-          .\azure\resources\RunDeployment.ps1 -initConfigFile $initConfigFile -mainConfigFile $mainConfigFile
+          .\azure\resources\RunDeployment.ps1 -initConfigFile .\azure\configs\init-${{ inputs.environment }}.json -mainConfigFile .\azure\configs\main-${{ inputs.environment }}.json
