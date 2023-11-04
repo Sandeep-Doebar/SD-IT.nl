@@ -20,12 +20,8 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
-          $environment = '${{ inputs.environment }}'
-          write-host $env:environment
-          write-host $environment
-          $initConfigFile = ".\azure\configs\init-" + $environment + ".json"
-          write-host $initConfigFile
-          $mainConfigFile = ".\azure\configs\main-" + $environment + ".json"
-          write-host $mainConfigFile
-
+          $initConfigFile = ".\azure\configs\init-" + '${{ inputs.environment}}' + ".json"
+          write-output $initConfigFile
+          $mainConfigFile = ".\azure\configs\main-" + '${{ inputs.environment}}' + ".json"
+          write-output $mainConfigFile
           .\azure\resources\RunDeployment.ps1 -initConfigFile $initConfigFile -mainConfigFile $mainConfigFile
