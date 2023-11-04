@@ -28,12 +28,9 @@ jobs:
     - name: Test
       shell: bash
       run: |
-        echo $ENV
-        echo $ENVIRONMENT
         echo ${{ github.event.inputs.environment }}
         echo ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}
         echo ${{ env.AZURE_CREDENTIALS }}
-        echo ${{ vars.BICEP_GITHUBACTIONS_TEKNOLOGI }}
     ##TEMP
     - name: Azure Login
       uses: Azure/login@v1
