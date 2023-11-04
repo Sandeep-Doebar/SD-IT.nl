@@ -27,7 +27,7 @@ jobs:
     - name: Azure Login
       uses: Azure/login@v1
       with:
-        creds: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI}}
+        creds: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}
         enable-AzPSSession: true
     - name: "Deploy Azure Infra"
       uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
