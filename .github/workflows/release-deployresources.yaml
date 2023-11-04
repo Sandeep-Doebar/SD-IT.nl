@@ -22,6 +22,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Azure Login
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI_PRD }}
+        enable-AzPSSession: true
     - name: "Deploy Azure Infra"
       uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
       with:
