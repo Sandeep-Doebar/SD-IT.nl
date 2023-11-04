@@ -2,6 +2,21 @@ name: Release - On push to master
 
 on:
   workflow_dispatch:
-  #push:
-  #  branches:
-  #    - "feature/bicep-acr-management"
+  push:
+    branches:
+      - "feature/automation-account"
+  
+jobs:
+  DeployInfra:
+    name: "Deploy Azure Infra"
+    runs-on: ubuntu-latest
+    environment: prd
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: "Deploy Azure Infra"
+      uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
+      with:
+        environment: prd
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}

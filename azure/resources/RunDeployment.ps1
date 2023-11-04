@@ -1,13 +1,13 @@
 <#
 az login 
-.\RunDeployment.ps1
+.\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc"
 #>
 
 #Variables
 [CmdletBinding(PositionalBinding = $False)]
 param (
-    [string]$initConfigFile = "..\configs\init-tst.jsonc",
-    [string]$mainConfigFile = "..\configs\main-tst.jsonc",
+    [string]$initConfigFile,
+    [string]$mainConfigFile,
     [string]$bicepMainFile = "main.bicep",
     [string]$bicepInitFile = "init.bicep",
     [boolean]$runBicepInit = $true

@@ -1,0 +1,23 @@
+name: "Deploy Azure Infra"
+
+inputs: 
+  environment:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Azure Login
+      uses: Azure/login@v1
+      with:
+        creds: ${{ env.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true
+    - name: Deploy Azure infra
+      id: deploy_step
+      uses: azure/powershell@v1
+      with:
+        azPSVersion: "latest"
+        inlineScript: |
+          .\azure\resources\RunDeployment.ps1 `
+            -initConfigFile .\azure\configs\init-${{ inputs.environment }}.json `
+            -mainConfigFile .\azure\configs\main-${{ inputs.environment }}.json
