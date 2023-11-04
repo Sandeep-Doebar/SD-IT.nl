@@ -21,7 +21,7 @@ runs:
       shell: pwsh
       run: |
         $module = '${{ inputs.module }}'
-        $deployment = '${{ inputs.stage }}'
+        $deployment = '${{ inputs.deployment }}'
         $moduleFilePath = ".\azure\resources\" + $deployment + "-modules\" + $module + "\main.bicep"
         $moduleFolderPath = ".\azure\resources\" + $deployment + "-modules\" + $module + "\"
         Write-Output ('{0}={1}' -f 'moduleFilePath', $moduleFilePath)

@@ -31,7 +31,7 @@ jobs:
         id: get-module-information
         with: 
           module: ${{ matrix.module }}
-          stage: init
+          deployment: init
       - name: Create parameter file
         uses: ./.github/actions/templates/create-parameter-file
         id: create-parameter-file
