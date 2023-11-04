@@ -18,6 +18,7 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
+          $environment = '${{ inputs.environment }}'
           .\azure\resources\RunDeployment.ps1 `
-            -initConfigFile .\azure\configs\init-${{ inputs.environment }}.json `
-            -mainConfigFile .\azure\configs\main-${{ inputs.environment }}.json
+            -initConfigFile ".\azure\configs\init-$environment.json" `
+            -mainConfigFile ".\azure\configs\main-${{ inputs.environment }}.json"
