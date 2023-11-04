@@ -19,8 +19,7 @@ jobs:
   DeployInfra:
     name: "Deploy Azure Infra"
     runs-on: ubuntu-latest
-    #environment: ${{ github.event.inputs.environment }}
-    environment: prd
+    environment: ${{ github.event.inputs.environment }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -28,7 +27,7 @@ jobs:
     - name: Azure Login
       uses: Azure/login@v1
       with:
-        creds: ${{ env.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI}}
         enable-AzPSSession: true
     - name: "Deploy Azure Infra"
       uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
