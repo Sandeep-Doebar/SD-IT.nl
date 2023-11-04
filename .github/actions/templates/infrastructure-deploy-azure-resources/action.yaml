@@ -18,4 +18,4 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
-          .\azure\resources\RunDeployment.ps1 -initConfigFile .\azure\configs\init-${{ inputs.environment }}.json -mainConfigFile .\azure\configs\main-${{ inputs.environment }}.json
+          .\azure\resources\RunDeployment.ps1 -initConfigFile .\azure\configs\init-${{ github.event.inputs.environment }}.json -mainConfigFile .\azure\configs\main-${{ github.event.inputs.environment }}.json
