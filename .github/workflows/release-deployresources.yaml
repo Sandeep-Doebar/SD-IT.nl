@@ -19,6 +19,7 @@ jobs:
   DeployInfra:
     name: "Deploy Azure Infra"
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -27,4 +28,4 @@ jobs:
       with:
         environment: ${{ inputs.environment }}
       env:
-        AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI_PRD }}
+        AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}
