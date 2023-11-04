@@ -1,9 +1,5 @@
 name: "Deploy Azure Infra"
 
-inputs: 
-  environment:
-    required: true
-
 runs:
   using: "composite"
   steps:
@@ -18,4 +14,4 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
-          .\azure\resources\RunDeployment.ps1 -initConfigFile .\azure\configs\init-${{ github.event.inputs.environment }}.json -mainConfigFile .\azure\configs\main-${{ github.event.inputs.environment }}.json
+          .\azure\resources\RunDeployment.ps1 -initConfigFile .\azure\configs\init-${{ env.ENVIRONMENT }}.json -mainConfigFile .\azure\configs\main-${{ env.ENVIRONMENT }}.json

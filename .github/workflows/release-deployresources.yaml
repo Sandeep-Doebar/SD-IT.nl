@@ -24,7 +24,6 @@ jobs:
       uses: actions/checkout@v2
     - name: "Deploy Azure Infra"
       uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
-      with:
-        environment: ${{ github.event.inputs.environment }}
       env:
         AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI_PRD }}
+        ENVIRONMENT: ${{ github.event.inputs.environment }}
