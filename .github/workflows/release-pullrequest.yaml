@@ -4,7 +4,7 @@ on:
   #workflow_dispatch:
   push:
     branches:
-      - "feature/psrule"
+      - "feature/automation-account"
 
 env:
   initConfigFile: ./azure/configs/init-tst.jsonc
@@ -44,7 +44,7 @@ jobs:
           psrulePath: "./azure/resources/psrule"
 
 
-          
+
 #      - name: Change module folder path for bash
 #        id: change-folderpath
 #        shell: pwsh
