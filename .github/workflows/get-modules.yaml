@@ -25,7 +25,8 @@ jobs:
         shell: pwsh
         run: |          
           try {  
-            $modules = (Get-ChildItem -Path './azure/resources/modules' -Directory).Name
+            $folder = '${{ inputs.folder }}'
+            $modules = (Get-ChildItem -Path $folder -Directory).Name
             switch ($modules.Count) {
               0 {
                 Write-Host "No changed module found."
