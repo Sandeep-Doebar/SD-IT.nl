@@ -33,5 +33,8 @@ module runBook 'modules/runbook.bicep' =  [for (account, index) in config.automa
     name: account.runbook.name
     automationAccountName: account.name
     location: location
-  } 
+  }
+  dependsOn:[
+    automationAccount
+  ]
 }]

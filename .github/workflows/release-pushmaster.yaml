@@ -7,16 +7,8 @@ on:
       - "feature/automation-account"
   
 jobs:
-  DeployInfra:
-    name: "Deploy Azure Infra"
-    runs-on: ubuntu-latest
-    environment: prd
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: "Deploy Azure Infra"
-      uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
-      with:
-        environment: prd
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}
+  deploy-resources:
+    uses: ./.github/workflows/release-deployresources.yaml
+    with:
+      environment: prd
+    secrets: inherit
