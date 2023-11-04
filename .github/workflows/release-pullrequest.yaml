@@ -1,10 +1,10 @@
 name: On Pull request
 
 on:
-  #workflow_dispatch:
-  push:
-    branches:
-      - "feature/automation-account"
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    - "feature/automation-account"
 
 env:
   initConfigFile: ./azure/configs/init-tst.jsonc
