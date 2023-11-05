@@ -1,10 +1,9 @@
-name: Release - On push to master
+name: Release - On push to main
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - "feature/automation-account"
+      - main
   
 jobs:
   deploy-resources:
