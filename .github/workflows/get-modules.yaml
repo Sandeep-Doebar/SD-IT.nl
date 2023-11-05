@@ -2,6 +2,11 @@ name: Get modules
 
 on:
   workflow_call:
+    inputs:
+      folder:
+        type: string
+        description: "THe folder to retrieve the modules from"
+        required: true
     outputs:
       modules:
         description: "The directory of the added or updated modules. Empty if no module was changed."
@@ -20,7 +25,8 @@ jobs:
         shell: pwsh
         run: |          
           try {  
-            $modules = (Get-ChildItem -Path './azure/resources/modules' -Directory).Name
+            $folder = '${{ inputs.folder }}'
+            $modules = (Get-ChildItem -Path $folder -Directory).Name
             switch ($modules.Count) {
               0 {
                 Write-Host "No changed module found."

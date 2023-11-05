@@ -3,9 +3,8 @@ name: "Get Module information"
 inputs: 
   module:
     required: true
-  deploymentConfigFile:
-    description: "The deployment config file"
-    required: true
+  deployment:
+    required: true 
 outputs:
   moduleFilePath:
     description: "The file path for the module"
@@ -22,17 +21,10 @@ runs:
       shell: pwsh
       run: |
         $module = '${{ inputs.module }}'
-        $deploymentConfigFile = '${{ inputs.deploymentConfigFile }}'
-        $deploymentConfigFile = Get-Content $deploymentConfigFile 
-        $deploymentConfigFile = $deploymentConfigFile -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/' | ConvertFrom-Json
-        $moduleFilePath = ".\azure\resources\modules\" + $module + "\main.bicep"
-        $moduleFolderPath = ".\azure\resources\modules\" + $module + "\"
+        $deployment = '${{ inputs.deployment }}'
+        $moduleFilePath = ".\azure\resources\" + $deployment + "-modules\" + $module + "\main.bicep"
+        $moduleFolderPath = ".\azure\resources\" + $deployment + "-modules\" + $module + "\"
         Write-Output ('{0}={1}' -f 'moduleFilePath', $moduleFilePath)
         Write-Output ('{0}={1}' -f 'moduleFilePath', $moduleFilePath) >> $env:GITHUB_OUTPUT
         Write-Output ('{0}={1}' -f 'moduleFolderPath', $moduleFolderPath)
         Write-Output ('{0}={1}' -f 'moduleFolderPath', $moduleFolderPath) >> $env:GITHUB_OUTPUT
-        #Write-Output ('{0}={1}' -f 'subscriptionId', $deploymentConfigFile.subscriptionId)
-        #Write-Output ('{0}={1}' -f 'subscriptionId', $deploymentConfigFile.subscriptionId) >> $env:GITHUB_OUTPUT
-        #Write-Output ('{0}={1}' -f 'tenantId', $deploymentConfigFile.tenantId)
-        #Write-Output ('{0}={1}' -f 'tenantId', $deploymentConfigFile.tenantId) >> $env:GITHUB_OUTPUT
-    

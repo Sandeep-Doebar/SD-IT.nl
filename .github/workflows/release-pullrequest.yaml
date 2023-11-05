@@ -1,24 +1,27 @@
 name: On Pull request
 
 on:
-  #workflow_dispatch:
-  push:
+  pull_request:
     branches:
-      - "feature/psrule"
+      - main
 
 env:
-  deploymentConfigFile: ./azure/configs/config.jsonc
+  initConfigFile: ./azure/configs/init-tst.jsonc
+  mainConfigFile: ./azure/configs/main-tst.jsonc
 
 jobs:
-  get-modules:
+  ##INIT MODULES
+  get-init-modules:
     uses: ./.github/workflows/get-modules.yaml
-  scan-modules: 
-    needs: get-modules
-    if: ${{ needs.get-modules.outputs.modules }}
+    with:
+      folder: ./azure/resources/init-modules
+  scan-init-modules: 
+    needs: get-init-modules
+    if: ${{ needs.get-init-modules.outputs.modules }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: ${{ fromJson(needs.get-modules.outputs.modules) }}
+        module: ${{ fromJson(needs.get-init-modules.outputs.modules) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,18 +30,52 @@ jobs:
         id: get-module-information
         with: 
           module: ${{ matrix.module }}
-          deploymentConfigFile: ${{ env.deploymentConfigFile }}
+          deployment: init
       - name: Create parameter file
         uses: ./.github/actions/templates/create-parameter-file
         id: create-parameter-file
         with: 
           moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          deploymentConfigFile: ${{ env.deploymentConfigFile }}
+          deploymentConfigFile: ${{ env.initConfigFile }}
       - name: PSRule validation
         uses: ./.github/actions/templates/validate-module-psrule
         with:
           moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
           psrulePath: "./azure/resources/psrule"
+  
+  ##MAIN MODULES
+  get-main-modules:
+    uses: ./.github/workflows/get-modules.yaml
+    with:
+      folder: ./azure/resources/main-modules
+  scan-main-modules: 
+    needs: get-main-modules
+    if: ${{ needs.get-main-modules.outputs.modules }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.get-main-modules.outputs.modules) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Get Module information
+        uses: ./.github/actions/templates/get-module-information
+        id: get-module-information
+        with: 
+          module: ${{ matrix.module }}
+          deployment: main
+      - name: Create parameter file
+        uses: ./.github/actions/templates/create-parameter-file
+        id: create-parameter-file
+        with: 
+          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+          deploymentConfigFile: ${{ env.mainConfigFile }}
+      - name: PSRule validation
+        uses: ./.github/actions/templates/validate-module-psrule
+        with:
+          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+          psrulePath: "./azure/resources/psrule"
+
 
 
 #      - name: Change module folder path for bash

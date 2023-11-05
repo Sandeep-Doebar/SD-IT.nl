@@ -1,0 +1,33 @@
+{
+    "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d",
+    "subscriptionId": "27e27c87-3431-4587-afa0-e36b64b597d7",
+    "resourceGroupName": "teknologi-eur1-prd-rg",
+    "managedIdentities": [
+        {
+            "name": "teknologi-eur1-prd-mi",
+            "ownerOnResourceGroup": true
+        }
+    ],
+    "automationAccounts": [
+        {
+            "name": "teknologi-eur1-prd-aa",
+            "sku": "Free",
+            "managedIdentity":{
+                "name": "teknologi-eur1-prd-mi"
+            },
+            "runbook":{
+                "name": "deleteresources"
+
+            }
+        
+        }
+    ],
+    "storageAccounts": [
+        {
+            "name": "teknologieur1prdsa",
+            "sku": "Standard_LRS",
+            "kind": "StorageV2",
+            "containerName": "teknologicontainer"
+        }
+    ]
+}

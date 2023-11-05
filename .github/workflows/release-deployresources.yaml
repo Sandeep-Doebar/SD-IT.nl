@@ -1,0 +1,31 @@
+name: Release - Deploy resources
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        required: true
+        options:
+          - tst
+          - prd
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+  
+jobs:
+  DeployInfra:
+    name: "Deploy Azure Infra"
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: "Deploy Azure Infra"
+      uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
+      with:
+        environment: ${{ inputs.environment }}
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}

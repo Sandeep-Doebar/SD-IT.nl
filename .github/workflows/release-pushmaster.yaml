@@ -1,0 +1,13 @@
+name: Release - On push to main
+
+on:
+  push:
+    branches:
+      - main
+  
+jobs:
+  deploy-resources:
+    uses: ./.github/workflows/release-deployresources.yaml
+    with:
+      environment: prd
+    secrets: inherit
