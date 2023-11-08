@@ -15,7 +15,7 @@ resource runbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' =
     logProgress: false
     logVerbose: false
     publishContentLink: {
-      uri: 'https://teknologieur1tstsa.blob.core.windows.net/teknologicontainer/deleteresourcesrunbook.ps1'
+      uri: 'https://teknologieur1tstsa.blob.core.windows.net/teknologicontainer/runbookDeleteResources.ps1'
     }
   }
 }

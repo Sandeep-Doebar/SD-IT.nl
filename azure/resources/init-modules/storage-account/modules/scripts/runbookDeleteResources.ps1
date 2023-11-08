@@ -1,5 +1,3 @@
-workflow deleteresources
-{
     $resourceGroup = "HelloWorld"
 
     # Ensures you do not inherit an AzContext in your runbook
@@ -11,4 +9,3 @@ workflow deleteresources
     # set and store context
     $AzureContext = Set-AzContext –SubscriptionId "533c96f5-a73c-4602-88ea-275a17e37973"
     Get-AzResourceGroup -Name $resourceGroup  | Remove-AzResourceGroup -Force
-}
