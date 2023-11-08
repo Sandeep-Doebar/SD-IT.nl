@@ -28,9 +28,6 @@
             "sku": "Standard_LRS",
             "kind": "StorageV2",
             "containerName": "teknologicontainer",
-            //"functionApps":{
-            //    "name": "teknologi-eur1-tst-fa",
-            //},
             "deploymentScripts":{
                 "name": "teknologi-eur1-tst-ds",
                 "fileName": "runbookDeleteResources.ps1"
