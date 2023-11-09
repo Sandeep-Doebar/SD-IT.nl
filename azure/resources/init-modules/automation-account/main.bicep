@@ -37,3 +37,27 @@ module runBook 'modules/runbook.bicep' =  [for (account, index) in config.automa
     automationAccount
   ]
 }]
+module schedule 'modules/schedule.bicep' =  [for (account, index) in config.automationAccounts: {
+  name: account.schedule.name
+  params: {
+    name: account.schedule.name
+    automationAccountName: account.name
+  }
+  dependsOn:[
+    runBook
+  ]
+}]
+
+
+module scheduleJob 'modules/jobSchedule.bicep' =  [for (account, index) in config.automationAccounts: {
+  name: account.scheduleJob.name
+  params: {
+    name: account.scheduleJob.name
+    //runBookName: account.runbook.name
+    automationAccountName: account.name
+    //Schedulename: account.schedule.name
+  }
+  dependsOn:[
+    schedule
+  ]
+}]
