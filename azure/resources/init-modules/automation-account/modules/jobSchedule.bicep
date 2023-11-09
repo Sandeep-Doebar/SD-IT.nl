@@ -1,7 +1,7 @@
-param name string
+param name string = guid(resourceGroup().id)
 param automationAccountName string
-//param runBookName string
-//param Schedulename string
+param runBookName string
+param Schedulename string
 
 resource automationAccount 'Microsoft.Automation/automationAccounts@2022-08-08' existing = {
   name: automationAccountName
@@ -12,10 +12,10 @@ resource scheduleJob 'Microsoft.Automation/automationAccounts/jobSchedules@2022-
   parent: automationAccount
   properties: {
     runbook: {
-      name: 'teknologi-eur1-tst-rb-deleteresources'
+      name: runBookName
     }
     schedule: {
-      name: 'teknologi-eur1-tst-s-deleteresources'
+      name: Schedulename
     }
   }
 }
