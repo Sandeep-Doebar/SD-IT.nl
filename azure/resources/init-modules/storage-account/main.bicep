@@ -1,7 +1,10 @@
+@description('Required. Config object that contains the resource definitions')
 param config object
+
+@description('Optional. Location for all resources.')
 param location string = resourceGroup().location
 
-module storageAccount 'modules/storage-account.bicep' = [for storageAccount in config.storageAccounts: {
+module storageAccountt 'modules/storage-account.bicep' = [for storageAccount in config.storageAccounts: {
   name: storageAccount.name
   params: {
     name: storageAccount.name
@@ -11,7 +14,6 @@ module storageAccount 'modules/storage-account.bicep' = [for storageAccount in c
     sku: storageAccount.sku
   }
 }]
-
 module deploymentScript 'modules/deployment-script.bicep' = [for storageAccount in config.storageAccounts: {
   name: storageAccount.deploymentScripts.name
   params: {
@@ -21,4 +23,7 @@ module deploymentScript 'modules/deployment-script.bicep' = [for storageAccount 
     filename: storageAccount.deploymentScripts.filename
     containerName: storageAccount.containerName
   }
+  dependsOn:[
+    storageAccountt
+  ]
 }]

@@ -30,7 +30,7 @@
         {
             "name": "teknologieur1tstsa",
             "sku": "Standard_LRS",
-            "kind": "StorageV2",
+            "kind": "StorageV2",   
             "containerName": "teknologicontainer",
             "deploymentScripts":{
                 "name": "teknologi-eur1-tst-ds",

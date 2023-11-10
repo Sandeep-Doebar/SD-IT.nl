@@ -7,7 +7,6 @@ param config object
 
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location
-
 module automationAccount 'modules/automation-account.bicep' = [for (account, index) in config.automationAccounts: {
   name: account.name
   params: {

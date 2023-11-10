@@ -1,6 +1,5 @@
 param config object
 param location string = resourceGroup().location
-
 module managedIdentity './init-modules/managed-identity/main.bicep' = if(contains(config, 'managedIdentities')){
   name: 'main-managed-identities'
   params: {
@@ -14,7 +13,7 @@ module storageAccount './init-modules/storage-account/main.bicep' = if(contains(
   params: {
     location: location
     config: config
-  }
+      }
 }
 
 module automationAccount './init-modules/automation-account/main.bicep' = if(contains(config, 'automationAccounts')){
