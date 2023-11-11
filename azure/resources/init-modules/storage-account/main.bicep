@@ -14,16 +14,3 @@ module storageAccount 'modules/storage-account.bicep' = [for sa in config.storag
     sku: sa.sku
   }
 }]
-module deploymentScript 'modules/deployment-script.bicep' = [for sa in config.storageAccounts: {
-  name: sa.deploymentScripts.name
-  params: {
-    name: sa.deploymentScripts.name
-    location: location
-    storageName : sa.name
-    filename: sa.deploymentScripts.filename
-    containerName: sa.containerName
-  }
-  dependsOn:[
-    storageAccount
-  ]
-}]
