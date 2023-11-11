@@ -27,7 +27,7 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
       }
       {
         name: 'CONTENT'
-        value: loadTextContent('./scripts/runbookDeleteResources.ps1')
+        value: loadTextContent('../../../scripts/runbookDeleteResources.ps1')
       }
     ]
     scriptContent: 'echo "$CONTENT" > ${filename} && az storage blob upload -f ${filename} -c ${containerName} -n ${filename}'

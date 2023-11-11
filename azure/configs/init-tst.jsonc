@@ -16,7 +16,10 @@
                 "name": "teknologi-eur1-tst-mi"
             },
             "runbook":{
-                "name": "teknologi-eur1-tst-rb-deleteresources"
+                "name": "teknologi-eur1-tst-rb-deleteresources",
+                "storageAccountName": "teknologieur1tstsa",
+                "runbookps": "runbookDeleteResources.ps1",
+                "containerName":"teknologicontainer"
             },
             "schedule":{
                 "name": "teknologi-eur1-tst-s-deleteresources"
