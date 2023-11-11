@@ -41,9 +41,10 @@
     "deploymentScripts": [
         {
             "name": "teknologi-eur1-tst-ds",
-            "fileName": "runbookDeleteResources",
+            "fileName": "runbookDeleteResources.ps1",
             "storageName": "teknologieur1tstsa",
-            "containerName": "teknologicontainer"
+            "containerName": "teknologicontainer",
+            "resourceGroup": "teknologi-eur1-tst-rg"
         }
     ]
 }
