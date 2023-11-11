@@ -1,8 +1,7 @@
-param name string = guid(resourceGroup().id, utcNow())
 param automationAccountName string
 param runBookName string
 param Schedulename string
-
+param name string
 
 resource automationAccount 'Microsoft.Automation/automationAccounts@2022-08-08' existing = {
   name: automationAccountName
