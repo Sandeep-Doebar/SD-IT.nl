@@ -34,7 +34,7 @@ module automationAccount './init-modules/automation-account/main.bicep' = if(con
     config: config
   }
   dependsOn:[
-    storageAccount
+    DeploymentScript
   ]
 }
 
