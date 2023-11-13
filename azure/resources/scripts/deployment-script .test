@@ -1,0 +1,19 @@
+#
+#Add runbookscript
+#
+$contentToAdd = @"
+$resourceGroup = $($mainConfigFile.ResourceGroupName)
+$auai = Get-AzUserAssignedIdentity
+$uan =  $($auai.name)
+$azadspn = Get-AzADServicePrincipal -DisplayName $uan
+$accountId = 
+    # Ensures you do not inherit an AzContext in your runbook
+    Disable-AzContextAutosave -Scope Process
+
+    # Connect to Azure with system-assigned managed identity
+    Connect-AzAccount -Identity -AccountId $($azadspn.appId)
+    # delete resourcegroup
+    Get-AzResourceGroup -Name $resourceGroup  | Remove-AzResourceGroup -ForceGet-AzUserAssignedIdentity
+"@
+new-item ./scripts/runbookDeleteResources.ps1
+Add-Content "./scripts/runbookDeleteResources.ps1" $contentToAdd
