@@ -45,6 +45,54 @@ $Components = New-Object System.Collections.Generic.List[System.String]
 }
 
 #
+#Create init-resourcegroup if not existing
+#
+
+Get-AzResourceGroup -Name $initConfig.ResourceGroupName -ErrorVariable notPresent -ErrorAction SilentlyContinue
+
+if ($notPresent)
+{
+    try {
+        New-AzResourceGroup -Name $initConfig.ResourceGroupName -Location "West Europe"
+        Write-Host "Creating resourceGroup $($initConfig.ResourceGroupName)... "-ForegroundColor Green
+        
+        }
+    catch {
+        Write-Host "Unable to deploy resourceGroup $($initConfig.ResourceGroupName)': exiting" -ForegroundColor Red
+        Throw $_ 
+        exit
+    }
+}
+else
+{
+        Write-Host "ResourceGroup $($initConfig.ResourceGroupName) already exists, continuing:" -ForegroundColor Yellow
+}
+
+#
+#Create main-resourcegroup if not existing
+#
+
+Get-AzResourceGroup -Name $Config.ResourceGroupName -ErrorVariable notPresent -ErrorAction SilentlyContinue
+
+if ($notPresent)
+{
+    try {
+        New-AzResourceGroup -Name $Config.ResourceGroupName -Location "West Europe"
+        Write-Host "Creating resourceGroup $($Config.ResourceGroupName)... "-ForegroundColor Green
+        
+        }
+    catch {
+        Write-Host "Unable to deploy resourceGroup $($Config.ResourceGroupName)': exiting" -ForegroundColor Red
+        Throw $_ 
+        exit
+    }
+}
+else
+{
+        Write-Host "ResourceGroup $($Config.ResourceGroupName) already exists, continuing:" -ForegroundColor Yellow
+}
+
+#
 #Deploy Bicep Resources (init)
 #
 if($runBicepInit){

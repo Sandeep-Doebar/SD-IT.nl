@@ -12,6 +12,10 @@ resource storageAccounts 'Microsoft.Storage/storageAccounts@2021-06-01' = {
     name: sku
   }
   kind: kind
+  properties: {
+  allowBlobPublicAccess: true
+  publicNetworkAccess: 'Enabled'
+  }
 }
 
 // Create blob service
