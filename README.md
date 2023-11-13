@@ -1,13 +1,14 @@
 # From code to deployment!
-# Creates an initial deployment that contains a deployment script that will automatically delete a ResourceGroup each day as a failsafe for testing
-# Creates an AKS cluster in Azure through IaC with bicep and github action.
+Creates an initial deployment that contains a deployment script that will automatically delete a ResourceGroup each day as a failsafe for testing
 
-Setup
-# Github Action for Pipeline
-# Bicep for IaC on Azure
-# Powershell to start Bicep modules
+Creates an AKS cluster in Azure through IaC with bicep and github action.
 
-Bicep structure:
+#Setup
+ Github Action for Pipeline
+ Bicep for IaC on Azure
+ Powershell to start Bicep modules
+ 
+# Bicep structure:
 
 .jsonc for configfile
 main.bicep
