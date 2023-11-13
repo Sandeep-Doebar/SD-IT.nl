@@ -4,9 +4,9 @@ Creates an initial deployment that contains a deployment script that will automa
 Creates an AKS cluster in Azure through IaC with bicep and github action.
 
 #Setup
- Github Action for Pipeline
- Bicep for IaC on Azure
- Powershell to start Bicep modules
+Github Action for Pipeline
+Bicep for IaC on Azure
+Powershell to start Bicep modules
  
 # Bicep structure:
 
