@@ -4,33 +4,15 @@
     "resourceGroupName": "teknologi-eur1-init-tst-rg",
     "managedIdentities": [
         {
+            "location": "westeurope",
             "name": "teknologi-eur1-tst-mi",
             "ownerOnResourceGroup": true
         }
     ],
-    "automationAccounts": [
-        {
-            "name": "teknologi-eur1-tst-aa",
-            "sku": "Free",
-            "managedIdentity":{
-                "name": "teknologi-eur1-tst-mi"
-            },
-            "runbook":{
-                "name": "teknologi-eur1-tst-rb-deleteresources",
-                "storageAccountName": "teknologieur1tstsa",
-                "runbookps": "runbookDeleteResources.ps1",
-                "containerName":"teknologicontainer"            
-            },
-            "schedule":{
-                "name": "teknologi-eur1-tst-s-deleteresources"
-            },
-            "scheduleJob":{
-                "name": "teknologi-eur1-tst-sj-deleteresources"
-            }        
-        }
-    ],
+    
     "storageAccounts": [
         {
+            "location": "westeurope",
             "name": "teknologieur1tstsa",
             "sku": "Standard_LRS",
             "kind": "StorageV2",   
@@ -38,13 +20,5 @@
             
         }
     ],
-    "deploymentScripts": [
-        {
-            "name": "teknologi-eur1-tst-ds",
-            "fileName": "runbookDeleteResources.ps1",
-            "storageName": "teknologieur1tstsa",
-            "containerName": "teknologicontainer",
-            "resourceGroup": "teknologi-eur1-tst-rg"
-        }
-    ]
+    
 }
