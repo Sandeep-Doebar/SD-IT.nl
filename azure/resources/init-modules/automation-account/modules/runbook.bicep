@@ -18,7 +18,7 @@ resource runbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' =
   properties: {
     runbookType: scriptType
     logProgress: true
-    logVerbose: true
+    logVerbose: false
     publishContentLink: {
       uri: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/${containerName}/${script}'
     }

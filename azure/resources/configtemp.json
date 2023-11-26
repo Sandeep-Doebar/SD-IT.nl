@@ -1,7 +1,8 @@
 {
     "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d",
     "subscriptionId": "27e27c87-3431-4587-afa0-e36b64b597d7",
-    "resourceGroupName": "teknologi-eur1-prd-rg",
+    "resourceGroupName": "teknologi-eur1-prd-management",
+    "location": "westeurope",
     "keyvaults": [
         {
             "name": "nsj-euw-prd-kv",

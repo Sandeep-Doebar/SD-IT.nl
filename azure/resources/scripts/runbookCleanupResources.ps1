@@ -1,10 +1,13 @@
 Param
 (
   [Parameter (Mandatory= $true)]
-  [Array] $resourceGroups,
+  [string] $managementResourceGroup,
 
   [Parameter (Mandatory= $true)]
-  [String] $identity
+  [string] $aksResourceGroup,
+
+  [Parameter (Mandatory= $true)]
+  [string] $identity
 )
 
 # Ensures you do not inherit an AzContext in your runbook
@@ -17,6 +20,8 @@ $AzureContext = (Connect-AzAccount -Identity -AccountId $identity).context
 $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext
 
 $allResourceGroups = Get-AzResourceGroup
+
+$resourceGroups = @($aksResourceGroup, $managementResourceGroup)
 
 foreach ($group in $allResourceGroups){
   if($resourceGroups -contains $group.ResourceGroupName){

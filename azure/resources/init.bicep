@@ -28,14 +28,14 @@ module deploymentScript './init-modules/deployment-script/main.bicep' = if(conta
   ]
 }
 
-//module automationAccount './init-modules/automation-account/main.bicep' = if(contains(config, 'automationAccounts')){
-//  name: 'main-automation-accounts'
-//  params: {
-//    location: location
-//    config: config
-//  }
-//  dependsOn:[
-//    deploymentScript
-//  ]
-//}
+module automationAccount './init-modules/automation-account/main.bicep' = if(contains(config, 'automationAccounts')){
+  name: 'main-automation-accounts'
+  params: {
+    location: location
+    config: config
+  }
+  dependsOn:[
+    deploymentScript
+  ]
+}
 
