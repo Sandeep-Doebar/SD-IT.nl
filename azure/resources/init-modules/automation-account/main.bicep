@@ -7,6 +7,12 @@ param config object
 
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location
+
+resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = [for (account, index) in config.automationAccounts: if(contains(config.automationAccounts[index], 'managedIdentity')) {
+  name: account.managedIdentity.name
+  scope: contains(account.managedIdentity, 'resourceGroup') ? resourceGroup(account.managedIdentity.resourceGroup) : resourceGroup()
+}]
+
 module automationAccount 'modules/automation-account.bicep' = [for (account, index) in config.automationAccounts: {
   name: account.name
   params: {
@@ -20,11 +26,6 @@ module automationAccount 'modules/automation-account.bicep' = [for (account, ind
   ]
 }]
 
-resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = [for (account, index) in config.automationAccounts: if(contains(config.automationAccounts[index], 'managedIdentity')) {
-  name: account.managedIdentity.name
-  scope: contains(account.managedIdentity, 'resourceGroup') ? resourceGroup(account.managedIdentity.resourceGroup) : resourceGroup()
-}]
-
 module runBook 'modules/runbook.bicep' =  [for (account, index) in config.automationAccounts: {
   name: account.runbook.name
   params: {
@@ -32,18 +33,20 @@ module runBook 'modules/runbook.bicep' =  [for (account, index) in config.automa
     automationAccountName: account.name
     location: location
     storageAccountName: account.runbook.storageAccountName
-    runbookps: account.runbook.runbookps
     containerName: account.runbook.containerName
+    script: account.runbook.script
+    scriptType: account.runbook.scriptType
   }
   dependsOn:[
     automationAccount
   ]
 }]
 module schedule 'modules/schedule.bicep' =  [for (account, index) in config.automationAccounts: {
-  name: account.schedule.name
+  name: '${account.runbook.name}-schedule'
   params: {
-    name: account.schedule.name
+    name: account.runbook.schedule.name
     automationAccountName: account.name
+    frequency: account.runbook.schedule.frequency
   }
   dependsOn:[
     runBook
@@ -51,12 +54,14 @@ module schedule 'modules/schedule.bicep' =  [for (account, index) in config.auto
 }]
 
 
-module scheduleJob 'modules/jobSchedule.bicep' =  [for (account, index) in config.automationAccounts: {
-  name: account.scheduleJob.name
+module scheduleJob 'modules/job-schedule.bicep' =  [for (account, index) in config.automationAccounts: {
+  name: '${account.runbook.name}-jobSchedule'
   params: {
-    runBookName: account.runbook.name
+    runbookName: account.runbook.name
+    scheduleName: account.runbook.schedule.name
     automationAccountName: account.name
-    Schedulename: account.schedule.name
+    parameters: account.runbook.parameters
+    principalId: managedIdentity[index].properties.principalId
   }
   dependsOn:[
     schedule

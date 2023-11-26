@@ -1,9 +1,12 @@
 param name string
 param automationAccountName string
 param location string
-param runbookps string
 param storageAccountName string
 param containerName string
+param script string
+param scriptType string
+
+
 resource automationAccount 'Microsoft.Automation/automationAccounts@2022-08-08' existing = {
   name: automationAccountName
 }
@@ -13,11 +16,11 @@ resource runbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' =
   name: name
   location: location
   properties: {
-    runbookType: 'PowerShell'
-    logProgress: false
-    logVerbose: false
+    runbookType: scriptType
+    logProgress: true
+    logVerbose: true
     publishContentLink: {
-      uri: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/${containerName}/${runbookps}'
+      uri: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/${containerName}/${script}'
     }
   }
 }

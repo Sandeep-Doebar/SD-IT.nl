@@ -1,22 +1,28 @@
-param name string = guid(resourceGroup().id, utcNow())
+param runbookName string
+param scheduleName string
 param automationAccountName string
-param runBookName string
-param Schedulename string
-
+param parameters object
+param principalId string
 
 resource automationAccount 'Microsoft.Automation/automationAccounts@2022-08-08' existing = {
   name: automationAccountName
 }
 
+var identity = {
+  identity: principalId
+}
+
 resource scheduleJob 'Microsoft.Automation/automationAccounts/jobSchedules@2022-08-08' = {
-  name: name
   parent: automationAccount
+  name: guid(automationAccount.id, runbookName, scheduleName)
   properties: {
     runbook: {
-      name: runBookName
+      name: runbookName
     }
     schedule: {
-      name: Schedulename
+      name: scheduleName
     }
+    parameters: union(identity, parameters)
   }
 }
+

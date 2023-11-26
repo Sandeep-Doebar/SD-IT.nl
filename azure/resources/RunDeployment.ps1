@@ -1,6 +1,7 @@
 <#
 az login 
 .\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc"
+.\RunDeployment.ps1 -initConfigFile "..\configs\init-prd.jsonc" -mainConfigFile "..\configs\main-prd.jsonc"
 #>
 
 #Variables
@@ -47,26 +48,7 @@ $Components = New-Object System.Collections.Generic.List[System.String]
 #
 #Create resourcegroup if not existing
 #
-
-Get-AzResourceGroup -Name $initConfig.ResourceGroupName -ErrorVariable notPresent -ErrorAction SilentlyContinue
-
-if ($notPresent)
-{
-    try {
-        New-AzResourceGroup -Name $initConfig.ResourceGroupName -Location "West Europe"
-        Write-Host "Creating resourceGroup $($initConfig.ResourceGroupName)... "-ForegroundColor Green
-        
-        }
-    catch {
-        Write-Host "Unable to deploy resourceGroup $($initConfig.ResourceGroupName)': exiting" -ForegroundColor Red
-        Throw $_ 
-        exit
-    }
-}
-else
-{
-        Write-Host "ResourceGroup $($initConfig.ResourceGroupName) already exists, continuing:" -ForegroundColor Yellow
-}
+az group create --name $initConfig.resourceGroupName --location $initConfig.location
 
 #
 #Deploy Bicep Resources (init)

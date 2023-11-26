@@ -1,5 +1,6 @@
 param config object
 param location string = resourceGroup().location
+
 module managedIdentity './init-modules/managed-identity/main.bicep' = if(contains(config, 'managedIdentities')){
   name: 'main-managed-identities'
   params: {
@@ -16,8 +17,8 @@ module storageAccount './init-modules/storage-account/main.bicep' = if(contains(
    }
 }
 
-module DeploymentScript './init-modules/deployment-script/main.bicep' = if(contains(config, 'deploymentScripts')){
-  name: 'main-DeploymentScript-accounts'
+module deploymentScript './init-modules/deployment-script/main.bicep' = if(contains(config, 'deploymentScripts')){
+  name: 'main-deploymentscripts'
   params: {
     location: location
     config: config
@@ -27,14 +28,14 @@ module DeploymentScript './init-modules/deployment-script/main.bicep' = if(conta
   ]
 }
 
-module automationAccount './init-modules/automation-account/main.bicep' = if(contains(config, 'automationAccounts')){
-  name: 'main-automation-accounts'
-  params: {
-    location: location
-    config: config
-  }
-  dependsOn:[
-    DeploymentScript
-  ]
-}
+//module automationAccount './init-modules/automation-account/main.bicep' = if(contains(config, 'automationAccounts')){
+//  name: 'main-automation-accounts'
+//  params: {
+//    location: location
+//    config: config
+//  }
+//  dependsOn:[
+//    deploymentScript
+//  ]
+//}
 

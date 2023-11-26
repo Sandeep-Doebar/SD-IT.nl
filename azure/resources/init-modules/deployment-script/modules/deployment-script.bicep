@@ -1,25 +1,25 @@
 param name string
-param filename string
-param containerName string
 param location string = resourceGroup().location
-param storageName string
+param kind string
+param properties object
+param storage object
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' existing = {
-  name: storageName
+  name: storage.name
 }
 
 resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: name
   location: location
-  kind: 'AzureCLI'
+  kind: kind
   properties: {
-    azCliVersion: '2.26.1'
-    timeout: 'PT5M'
-    retentionInterval: 'PT1H'
+    azCliVersion: properties.azCliVersion
+    timeout: properties.timeout
+    retentionInterval: properties.retentionInterval
     environmentVariables: [
       {
         name: 'AZURE_STORAGE_ACCOUNT'
-        value: storageName
+        value: storageAccount.name
       }
       {
         name: 'AZURE_STORAGE_KEY'
@@ -27,9 +27,9 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
       }
       {
         name: 'CONTENT'
-        value: loadTextContent('../../../scripts/runbookDeleteResources.ps1')
+        value: loadTextContent('../../../scripts/runbookCleanupResources.ps1')
       }
     ]
-    scriptContent: 'echo "$CONTENT" > ${filename} && az storage blob upload -f ${filename} -c ${containerName} -n ${filename}'
+    scriptContent: 'echo "$CONTENT" > ${storage.fileName} && az storage blob upload -f ${storage.fileName} -c ${storage.containerName} -n ${storage.fileName}'
   }
 }

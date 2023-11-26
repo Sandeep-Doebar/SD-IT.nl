@@ -1,23 +1,17 @@
 @description('Required. Config object that contains the resource definitions')
 param config object
+
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' existing  = [for (account, index) in config.automationAccounts: if(contains(config.storageAccounts, 'storageAccounts')) {
-  name: account.storageAccounts.name
-}]
 
-
-module deploymentScript 'modules/deployment-script.bicep' = [for ds in config.deploymentScripts: {
-  name: ds.name
+module deploymentScript 'modules/deployment-script.bicep' = [for script in config.deploymentScripts: {
+  name: script.name
   params: {
-    name: ds.name
+    name: script.name
     location: location
-    storageName : ds.storageName
-    filename: ds.filename
-    containerName: ds.containerName
+    kind: script.kind
+    properties: script.properties
+    storage: script.storageAccount
   }
-  dependsOn:[
-    storageAccount
-  ]
 }]
