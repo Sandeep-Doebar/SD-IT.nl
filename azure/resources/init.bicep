@@ -14,7 +14,18 @@ module storageAccount './init-modules/storage-account/main.bicep' = if(contains(
   params: {
     location: location
     config: config
+   }
+}
+
+module deploymentScript './init-modules/deployment-script/main.bicep' = if(contains(config, 'deploymentScripts')){
+  name: 'main-deploymentscripts'
+  params: {
+    location: location
+    config: config
   }
+  dependsOn:[
+    storageAccount
+  ]
 }
 
 module automationAccount './init-modules/automation-account/main.bicep' = if(contains(config, 'automationAccounts')){
@@ -24,7 +35,7 @@ module automationAccount './init-modules/automation-account/main.bicep' = if(con
     config: config
   }
   dependsOn:[
-    storageAccount
+    deploymentScript
   ]
 }
 

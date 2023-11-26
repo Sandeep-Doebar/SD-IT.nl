@@ -3,7 +3,8 @@ name: On Pull request
 on:
   pull_request:
     branches:
-      - main
+      #- main
+      - test
 
 env:
   initConfigFile: ./azure/configs/init-tst.jsonc

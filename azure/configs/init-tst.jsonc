@@ -1,11 +1,37 @@
 {
-    "tenantId": "fd80a716-5196-4d81-983a-797ab580b6f3",
-    "subscriptionId": "533c96f5-a73c-4602-88ea-275a17e37973",
+    "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d",
+    "subscriptionId": "27e27c87-3431-4587-afa0-e36b64b597d7",
     "resourceGroupName": "teknologi-eur1-tst-rg",
+    "location": "westeurope",
     "managedIdentities": [
         {
             "name": "teknologi-eur1-tst-mi",
             "ownerOnResourceGroup": true
+        }
+    ],
+    "storageAccounts": [
+        {
+            "name": "teknologitstsa",
+            "sku": "Standard_LRS",
+            "kind": "StorageV2",   
+            "containerName": "teknologicontainer"
+            
+        }
+    ],
+    "deploymentScripts": [
+        {
+            "name": "teknologi-eur1-tst-ds",
+            "kind": "AzureCLI",
+            "properties": {
+                "azCliVersion": "2.26.1",
+                "timeout": "PT5M",
+                "retentionInterval": "PT1H"
+            },
+            "storageAccount": {
+                "name": "teknologitstsa",
+                "fileName": "runbookCleanupResources.ps1",
+                "containerName": "teknologicontainer"
+            }
         }
     ],
     "automationAccounts": [
@@ -15,19 +41,21 @@
             "managedIdentity":{
                 "name": "teknologi-eur1-tst-mi"
             },
-            "runbook":{
-                "name": "deleteresources"
-
-            }
-        
-        }
-    ],
-    "storageAccounts": [
-        {
-            "name": "teknologieur1tstsa",
-            "sku": "Standard_LRS",
-            "kind": "StorageV2",
-            "containerName": "teknologicontainer"
+            "runbook": {
+                "name": "teknologi-eur1-tst-cleanup-rb",
+                "storageAccountName": "teknologitstsa",
+                "containerName":"teknologicontainer", 
+                "script": "runbookCleanupResources.ps1",
+                "scriptType": "PowerShell",
+                "schedule":{
+                    "name": "cleanup-daily",
+                    "frequency": "Day"
+                },
+                "parameters": {
+                    "managementResourceGroup": "teknologi-eur1-prd-management",
+                    "aksResourceGroup": "teknologi-eur1-prd-aks"
+                }          
+            }    
         }
     ]
 }

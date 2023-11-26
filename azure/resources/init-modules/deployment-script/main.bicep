@@ -4,13 +4,14 @@ param config object
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location
 
-module storageAccount 'modules/storage-account.bicep' = [for sa in config.storageAccounts: {
-  name: sa.name
+
+module deploymentScript 'modules/deployment-script.bicep' = [for script in config.deploymentScripts: {
+  name: script.name
   params: {
-    name: sa.name
+    name: script.name
     location: location
-    containerName: sa.containerName
-    kind: sa.kind
-    sku: sa.sku
+    kind: script.kind
+    properties: script.properties
+    storage: script.storageAccount
   }
 }]

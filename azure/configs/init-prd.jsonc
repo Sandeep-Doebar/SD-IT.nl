@@ -1,11 +1,37 @@
 {
     "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d",
     "subscriptionId": "27e27c87-3431-4587-afa0-e36b64b597d7",
-    "resourceGroupName": "teknologi-eur1-prd-rg",
+    "resourceGroupName": "teknologi-eur1-prd-management",
+    "location": "westeurope",
     "managedIdentities": [
         {
             "name": "teknologi-eur1-prd-mi",
             "ownerOnResourceGroup": true
+        }
+    ],
+    "storageAccounts": [
+        {
+            "name": "teknologiprdsa",
+            "sku": "Standard_LRS",
+            "kind": "StorageV2",   
+            "containerName": "teknologicontainer"
+            
+        }
+    ],
+    "deploymentScripts": [
+        {
+            "name": "teknologi-eur1-prd-ds",
+            "kind": "AzureCLI",
+            "properties": {
+                "azCliVersion": "2.26.1",
+                "timeout": "PT5M",
+                "retentionInterval": "PT1H"
+            },
+            "storageAccount": {
+                "name": "teknologiprdsa",
+                "fileName": "runbookCleanupResources.ps1",
+                "containerName": "teknologicontainer"
+            }
         }
     ],
     "automationAccounts": [
@@ -15,19 +41,21 @@
             "managedIdentity":{
                 "name": "teknologi-eur1-prd-mi"
             },
-            "runbook":{
-                "name": "deleteresources"
-
+            "runbook": {
+                "name": "teknologi-eur1-prd-cleanup-rb",
+                "storageAccountName": "teknologiprdsa",
+                "containerName":"teknologicontainer", 
+                "script": "runbookCleanupResources.ps1",
+                "scriptType": "PowerShell",
+                "schedule":{
+                    "name": "cleanup-daily",
+                    "frequency": "Day"
+                },
+                "parameters": {
+                    "managementResourceGroup": "teknologi-eur1-prd-management",
+                    "aksResourceGroup": "teknologi-eur1-prd-aks"
+                }          
             }
-        
-        }
-    ],
-    "storageAccounts": [
-        {
-            "name": "teknologieur1prdsa",
-            "sku": "Standard_LRS",
-            "kind": "StorageV2",
-            "containerName": "teknologicontainer"
         }
     ]
 }

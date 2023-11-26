@@ -1,6 +1,7 @@
 <#
 az login 
 .\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc"
+.\RunDeployment.ps1 -initConfigFile "..\configs\init-prd.jsonc" -mainConfigFile "..\configs\main-prd.jsonc"
 #>
 
 #Variables
@@ -43,6 +44,11 @@ $Components = New-Object System.Collections.Generic.List[System.String]
     }
     $Components.Add($DeploymentName)
 }
+
+#
+#Create resourcegroup if not existing
+#
+az group create --name $initConfig.resourceGroupName --location $initConfig.location
 
 #
 #Deploy Bicep Resources (init)
