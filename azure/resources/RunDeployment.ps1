@@ -1,13 +1,23 @@
 <#
+$key = az sshkey show --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg" | ConvertFrom-Json
+if ($key  -eq $null )
+{
+    az sshkey create --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg"
+    $key = az sshkey show --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg" | ConvertFrom-Json
+    
+}
+$key = $key.publicKey  
 az login 
-.\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc"
+.\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc" -sshPublicKey $key
 #>
 
 #Variables
+
 [CmdletBinding(PositionalBinding = $False)]
 param (
     [string]$initConfigFile,
     [string]$mainConfigFile,
+    [string]$sshPublicKey,
     [string]$bicepMainFile = "main.bicep",
     [string]$bicepInitFile = "init.bicep",
     [boolean]$runBicepInit = $true

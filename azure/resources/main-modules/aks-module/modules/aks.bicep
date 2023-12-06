@@ -27,7 +27,7 @@ param availabilityZones array = [
   '3'
 ]
 @description('Allow the cluster to auto scale to the max node count')
-param enableAutoScaling bool = true
+param enableAutoScaling bool
 @description('SSH RSA public key for all the nodes')
 @secure()
 param sshPublicKey string
@@ -37,21 +37,30 @@ param tags object
   'azure' 
 ])
 @description('Network plugin used for building Kubernetes network')
-param networkPlugin string = 'azure'
+param networkPlugin string
 @description('Cluster services IP range')
-param serviceCidr string = '10.0.0.0/16'
+param serviceCidr string 
 @description('DNS Service IP address')
-param dnsServiceIP string = '10.0.0.10'
+param dnsServiceIP string 
 @description('Docker Bridge IP range')
-param dockerBridgeCidr string = '172.17.0.1/16'
-
+param dockerBridgeCidr string
 param logAnalyticsWork string = '${prefix}-oms-${clusterName}-${location}'
 @description('Subnet id to use for the cluster')
 param subnetId string
+@description('The virtual network name')
+param vnetName string = '${prefix}-vnet-${clusterName}-${location}'
+@description('The name of the subnet')
+param subnetName string = '${prefix}-snet-${clusterName}-${location}'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01'  existing = {
   name: logAnalyticsWork
 }
+
+resource vnet 'Microsoft.Network/virtualNetworks@2019-11-01'   existing = {
+  name: vnetName
+}
+
+output subnetId string = '${vnet.id}/subnets/${subnetName}'
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
   name: '${prefix}-aks-${clusterName}-${location}'
@@ -119,4 +128,3 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
 }
  
 output controlPlaneFQDN string = aksCluster.properties.fqdn
-output clusterPrincipalID string = aksCluster.properties.identityProfile.kubeletidentity.objectId
