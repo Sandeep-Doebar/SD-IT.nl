@@ -6,7 +6,7 @@ param vnetName string = '${prefix}-vnet-${clusterName}-${location}'
 @description('The name of the subnet')
 param subnetName string = '${prefix}-snet-${clusterName}-${location}'
 @description('The virtual network address prefixes')
-param vnetAddressPrefixes array
+param vnetAddressPrefixes string
 @description('The subnet address prefix')
 param subnetAddressPrefix string
 @description('Tags for the resources')
@@ -17,7 +17,9 @@ resource vnet 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   location: location
   properties: {
     addressSpace: {
-      addressPrefixes: vnetAddressPrefixes
+      addressPrefixes: [
+        vnetAddressPrefixes
+      ] 
     }
     subnets: [
       {

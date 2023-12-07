@@ -22,8 +22,6 @@ param osDiskSizeGB int
 param nodeAdminUsername string
 @description('Availability zones to use for the cluster nodes')
 param availabilityZones array = [
-  '1'
-  '2'
   '3'
 ]
 @description('Allow the cluster to auto scale to the max node count')
@@ -45,8 +43,7 @@ param dnsServiceIP string
 @description('Docker Bridge IP range')
 param dockerBridgeCidr string
 param logAnalyticsWork string = '${prefix}-oms-${clusterName}-${location}'
-@description('Subnet id to use for the cluster')
-param subnetId string
+
 @description('The virtual network name')
 param vnetName string = '${prefix}-vnet-${clusterName}-${location}'
 @description('The name of the subnet')
@@ -60,17 +57,15 @@ resource vnet 'Microsoft.Network/virtualNetworks@2019-11-01'   existing = {
   name: vnetName
 }
 
-output subnetId string = '${vnet.id}/subnets/${subnetName}'
-
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
-  name: '${prefix}-aks-${clusterName}-${location}'
+  name: '${prefix}aks${clusterName}${location}'
   location: location
   identity: {
     type: 'SystemAssigned'
   }
   tags: tags  
   properties: {
-    nodeResourceGroup: 'rg-${prefix}-aks-nodes-${clusterName}-${location}'
+    nodeResourceGroup: 'rg${prefix}aksnodes${clusterName}'
     dnsPrefix: '${clusterName}-dns'
     enableRBAC: true    
     agentPoolProfiles: [
@@ -87,8 +82,8 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
         type: 'VirtualMachineScaleSets'
         mode: 'System'
         availabilityZones: availabilityZones
-        enableEncryptionAtHost: true
-        vnetSubnetID: subnetId
+        enableEncryptionAtHost: false
+        vnetSubnetID: '${vnet.id}/subnets/${subnetName}'
       }
     ]
     networkProfile: {      

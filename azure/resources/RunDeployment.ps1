@@ -63,7 +63,7 @@ Get-AzResourceGroup -Name $initConfig.ResourceGroupName -ErrorVariable notPresen
 if ($notPresent)
 {
     try {
-        New-AzResourceGroup -Name $initConfig.ResourceGroupName -Location "West Europe"
+        New-AzResourceGroup -Name $initConfig.ResourceGroupName -Location "France Central"
         Write-Host "Creating resourceGroup $($initConfig.ResourceGroupName)... "-ForegroundColor Green
         
         }
@@ -87,7 +87,7 @@ Get-AzResourceGroup -Name $Config.ResourceGroupName -ErrorVariable notPresent -E
 if ($notPresent)
 {
     try {
-        New-AzResourceGroup -Name $Config.ResourceGroupName -Location "West Europe"
+        New-AzResourceGroup -Name $Config.ResourceGroupName -Location "France Central"
         Write-Host "Creating resourceGroup $($Config.ResourceGroupName)... "-ForegroundColor Green
         
         }
@@ -103,6 +103,26 @@ else
 }
 
 #
+#check registratie
+#
+
+$msoperationsmangement = az provider show -n Microsoft.OperationsManagement | ConvertFrom-Json
+$msoperationsmangement = $msoperationsmangement.registrationstate
+
+if ($msoperationsmangement -eq "NotRegistered")
+{
+    az provider register --namespace Microsoft.OperationsManagement
+}
+
+$msOperationalInsights = az provider show -n Microsoft.OperationalInsights | ConvertFrom-Json
+$msOperationalInsights = $msOperationalInsights.registrationstate
+
+if ($msOperationalInsights -eq "NotRegistered")
+{
+    az provider register --namespace Microsoft.msOperationalInsights
+}
+
+#
 #Deploy Bicep Resources (init)
 #
 if($runBicepInit){
@@ -112,7 +132,7 @@ if($runBicepInit){
                 --resource-group $initConfig.ResourceGroupName `
                 --subscription $initConfig.SubscriptionId `
                 --template-file "$($PSScriptRoot)/$($bicepInitFile)" `
-                --parameters "config=`@./initconfigtemp.json"
+                --parameters "config=`@./initconfigtemp.json" 
         
             if (!$?) {
                 throw "Unable to deploy resources"
@@ -120,6 +140,18 @@ if($runBicepInit){
         })    
     }
 }
+
+$key = az sshkey show --name "mySSHKey" --resource-group $Config.ResourceGroupName | ConvertFrom-Json
+if ($key -eq $null)
+{
+az sshkey create --name "mySSHKey" --resource-group $Config.ResourceGroupName  
+$key = az sshkey show --name "mySSHKey" --resource-group $Config.ResourceGroupName | ConvertFrom-Json    
+}
+else
+{
+    write-host "using existing ssh public key..."
+}
+$sshPublicKey = $key.PublicKey
 
 #
 #Deploy Bicep Resources (main)
@@ -129,7 +161,7 @@ $ExecuteDeployment.invoke("Bicep resources", {
         --resource-group $Config.ResourceGroupName `
         --subscription $Config.SubscriptionId `
         --template-file "$($PSScriptRoot)/$($bicepMainFile)" `
-        --parameters "config=`@./configtemp.json"
+        --parameters "config=`@./configtemp.json" "sshPublicKey=$sshPublicKey"
 
     if (!$?) {
         throw "Unable to deploy resources"
