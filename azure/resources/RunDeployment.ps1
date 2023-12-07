@@ -1,4 +1,5 @@
 <#
+az login 
 $key = az sshkey show --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg" | ConvertFrom-Json
 if ($key  -eq $null )
 {
@@ -7,7 +8,6 @@ if ($key  -eq $null )
     
 }
 $key = $key.publicKey  
-az login 
 .\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc" -sshPublicKey $key
 #>
 
@@ -20,7 +20,7 @@ param (
     [string]$sshPublicKey,
     [string]$bicepMainFile = "main.bicep",
     [string]$bicepInitFile = "init.bicep",
-    [boolean]$runBicepInit = $true
+    [boolean]$runBicepInit = $false
 )
 
 #Stop script if try- catch failes
