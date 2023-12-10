@@ -17,7 +17,7 @@ param prefix string
 
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' existing = {
-  name: '${prefix}-aks-${clusterName}-${location}'
+  name: '${prefix}aks${clusterName}${location}'
 }
 output clusterPrincipalID string = aksCluster.properties.identityProfile.kubeletidentity.objectId
 

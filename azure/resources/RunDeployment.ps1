@@ -1,14 +1,6 @@
 <#
 az login 
-$key = az sshkey show --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg" | ConvertFrom-Json
-if ($key  -eq $null )
-{
-    az sshkey create --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg"
-    $key = az sshkey show --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg" | ConvertFrom-Json
-    
-}
-$key = $key.publicKey  
-.\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc" -sshPublicKey $key
+.\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc"
 #>
 
 #Variables
@@ -144,6 +136,7 @@ if($runBicepInit){
 $key = az sshkey show --name "mySSHKey" --resource-group $Config.ResourceGroupName | ConvertFrom-Json
 if ($key -eq $null)
 {
+start-sleep -Seconds 60    
 az sshkey create --name "mySSHKey" --resource-group $Config.ResourceGroupName  
 $key = az sshkey show --name "mySSHKey" --resource-group $Config.ResourceGroupName | ConvertFrom-Json    
 }
