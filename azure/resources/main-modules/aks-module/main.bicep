@@ -49,6 +49,7 @@ module aksCluster 'modules/aks.bicep' = [for aks in config.akservices: {
     dockerBridgeCidr: aks.dockerBridgeCidr
     networkPlugin: aks.networkPlugin
     enableAutoScaling: aks.enableAutoScaling
+    noderesourcegroup: aks.noderesourcegroup
   }
   dependsOn: [
     logAnalyticsWorkspace    

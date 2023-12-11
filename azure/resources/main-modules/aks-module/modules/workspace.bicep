@@ -15,7 +15,7 @@ param tags object
   'Premium'
 ])
 param workspaceTier string
-param logAnalyticsWork string = '${prefix}-oms-${clusterName}-${location}'
+param logAnalyticsWork string = 'log-${clusterName}-${prefix}-${location}'
  
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
   name: logAnalyticsWork

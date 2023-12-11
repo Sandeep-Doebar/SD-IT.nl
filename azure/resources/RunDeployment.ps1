@@ -12,7 +12,7 @@ param (
     [string]$sshPublicKey,
     [string]$bicepMainFile = "main.bicep",
     [string]$bicepInitFile = "init.bicep",
-    [boolean]$runBicepInit = $false
+    [boolean]$runBicepInit = $true
 )
 
 #Stop script if try- catch failes
@@ -133,11 +133,36 @@ if($runBicepInit){
     }
 }
 
+#
+#Upload runbook
+#
+if($runBicepInit){
+$clid = (Get-AzUserAssignedIdentity -ResourceGroupName $initConfig.ResourceGroupName -Name $initConfig.managedIdentities.name).clientid  
+$rg = $Config.ResourceGroupName
+$aa = $initConfig.automationAccounts.name
+$rbname = $initConfig.automationAccounts.runbook.name
+$sjn = $initConfig.automationAccounts.schedule.name
+$runbooknps = $initConfig.automationAccounts.runbook.runbookps 
+$path = ".\scripts\$runbooknps"
+new-item $path -Force -ItemType File -Value "
+# Ensures you do not inherit an AzContext in your runbook
+Disable-AzContextAutosave -Scope Process
+
+# Connect to Azure with system-assigned managed identity
+Connect-AzAccount -Identity -AccountId $clid
+
+# set and store context
+Get-AzResourceGroup -Name $rg  | Remove-AzResourceGroup -Force
+"
+Import-AzAutomationRunbook -AutomationAccountName $aa -Name $rbname -Path $path -Published -ResourceGroupName $initConfig.ResourceGroupName -Type PowerShell -Force
+Register-AzAutomationScheduledRunbook -AutomationAccountName $aa -Name $rbname -ResourceGroupName $initConfig.ResourceGroupName -ScheduleName $sjn
+}
+
 $key = az sshkey show --name "mySSHKey" --resource-group $Config.ResourceGroupName | ConvertFrom-Json
 if ($key -eq $null)
 {
 start-sleep -Seconds 60    
-az sshkey create --name "mySSHKey" --resource-group $Config.ResourceGroupName  
+az sshkey create --name "mySSHKey" --resource-group $Config.ResourceGroupName 
 $key = az sshkey show --name "mySSHKey" --resource-group $Config.ResourceGroupName | ConvertFrom-Json    
 }
 else
@@ -163,6 +188,6 @@ $ExecuteDeployment.invoke("Bicep resources", {
 
 Write-Host 'Deployment finished. Installed components:' -ForegroundColor Green
 $Components
-
+Remove-Item .\scripts\runbookDeleteResources.ps1
 Remove-Item ./initconfigtemp.json
 Remove-Item ./configtemp.json

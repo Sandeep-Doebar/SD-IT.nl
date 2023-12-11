@@ -17,9 +17,7 @@
             },
             "runbook":{
                 "name": "teknologi-eur1-tst-rb-deleteresources",
-                "storageAccountName": "teknologieur1tstsa",
-                "runbookps": "runbookDeleteResources.ps1",
-                "containerName":"teknologicontainer"            
+                "runbookps": "runbookDeleteResources.ps1"        
             },
             "schedule":{
                 "name": "teknologi-eur1-tst-s-deleteresources"
@@ -35,16 +33,6 @@
             "sku": "Standard_LRS",
             "kind": "StorageV2",   
             "containerName": "teknologicontainer"
-            
-        }
-    ],
-    "deploymentScripts": [
-        {
-            "name": "teknologi-eur1-tst-ds",
-            "fileName": "runbookDeleteResources.ps1",
-            "storageName": "teknologieur1tstsa",
-            "containerName": "teknologicontainer",
-            "resourceGroup": "teknologi-eur1-tst-rg"
         }
     ]
 }

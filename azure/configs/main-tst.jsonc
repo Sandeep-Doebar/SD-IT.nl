@@ -49,7 +49,8 @@
         {
             "name": "aksDeploy",
             "prefix": "test",
-            "clusterName": "teknologiakscluster",
+            "clusterName": "teknologi-aks-cluster",
+            "noderesourcegroup": "teknologi-eur1-aksnodes-tst-rg",
             "tags": {
                 "Environment": "test",
                 "Resource": "AKS",
