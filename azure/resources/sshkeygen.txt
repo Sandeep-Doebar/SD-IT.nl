@@ -1,8 +1,0 @@
-az sshkey create --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg"   
-$key = az sshkey show --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg" | ConvertFrom-Json
-if ($key -eq $null)
-{
-az sshkey create --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg"   
-$key = az sshkey show --name "mySSHKey" --resource-group "teknologi-eur1-main-tst-rg" | ConvertFrom-Json    
-}
-$sshPublicKey = $key.PublicKey
