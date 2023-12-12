@@ -14,5 +14,8 @@ module automationAccount './init-modules/automation-account/main.bicep' = if(con
     location: location
     config: config
   }
+  dependsOn: [
+    managedIdentity    
+  ]
 }
 

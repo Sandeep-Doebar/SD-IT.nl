@@ -42,12 +42,12 @@ param serviceCidr string
 param dnsServiceIP string 
 @description('Docker Bridge IP range')
 param dockerBridgeCidr string
-param logAnalyticsWork string = 'log-${clusterName}-${prefix}-${location}'
+param logAnalyticsWork string = 'log-${clusterName}-${prefix}'
 param noderesourcegroup string
 @description('The virtual network name')
-param vnetName string = 'vnet-${clusterName}-${prefix}-${location}'
+param vnetName string = 'vnet-${clusterName}-${prefix}'
 @description('The name of the subnet')
-param subnetName string = 'snet-${clusterName}-${prefix}-${location}'
+param subnetName string = 'snet-${clusterName}-${prefix}'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01'  existing = {
   name: logAnalyticsWork
@@ -58,7 +58,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2019-11-01'   existing = {
 }
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
-  name: 'aks-${clusterName}-${prefix}-${location}'
+  name: 'aks-${clusterName}-${prefix}'
   location: location
   identity: {
     type: 'SystemAssigned'

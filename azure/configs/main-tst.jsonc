@@ -3,7 +3,7 @@
     "subscriptionId": "533c96f5-a73c-4602-88ea-275a17e37973",
     "resourceGroupName": "teknologi-eur1-main-tst-rg",
     "prefix": "test",
-    "clusterName": "teknologiakscluster",
+    "clusterName": "teknologi-aks-cluster",
     "tags": {
         "Environment": "test",
         "Resource": "AKS",
@@ -16,7 +16,7 @@
             "vnetAddressPrefixes": "10.240.0.0/16",
             "subnetAddressPrefix": "10.240.0.0/20",
             "prefix": "test",
-            "clusterName": "teknologiakscluster",
+            "clusterName": "teknologi-aks-cluster",
             "tags": {
                 "Environment": "test",
                 "Resource": "AKS",
@@ -37,7 +37,7 @@
             "name": "workSpaceDeploy",
             "workspaceTier": "PerGB2018",
             "prefix": "test",
-            "clusterName": "teknologiakscluster",
+            "clusterName": "teknologi-aks-cluster",
             "tags": {
                 "Environment": "test",
                 "Resource": "AKS",
@@ -73,8 +73,9 @@
     "registries": [
         {
             "name": "registryDeploy",
+            "nameacr": "teknologiregistery",
             "prefix": "test",
-            "clusterName": "teknologiakscluster",
+            "clusterName": "teknologi-aks-cluster",
             "tags": {
                 "Environment": "test",
                 "Resource": "AKS",

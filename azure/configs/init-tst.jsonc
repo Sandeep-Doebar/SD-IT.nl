@@ -20,7 +20,7 @@
                 "runbookps": "runbookDeleteResources.ps1"        
             },
             "schedule":{
-                "name": "teknologi-eur1-tst-s-deleteresources"
+                "name": "teknologi-eur1-tst-schedule-daily"
             },
             "scheduleJob":{
                 "name": "teknologi-eur1-tst-sj-deleteresources"

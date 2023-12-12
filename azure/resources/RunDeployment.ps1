@@ -12,7 +12,7 @@ param (
     [string]$sshPublicKey,
     [string]$bicepMainFile = "main.bicep",
     [string]$bicepInitFile = "init.bicep",
-    [boolean]$runBicepInit = $true
+    [boolean]$runBicepInit = $false
 )
 
 #Stop script if try- catch failes
@@ -188,6 +188,6 @@ $ExecuteDeployment.invoke("Bicep resources", {
 
 Write-Host 'Deployment finished. Installed components:' -ForegroundColor Green
 $Components
-Remove-Item .\scripts\runbookDeleteResources.ps1
+Remove-Item .\scripts\runbookDeleteResources.ps1 -ErrorAction Ignore
 Remove-Item ./initconfigtemp.json
 Remove-Item ./configtemp.json

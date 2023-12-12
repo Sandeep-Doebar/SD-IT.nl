@@ -1,6 +1,5 @@
-
 param clusterName string
-param clusterPrincipalID string
+param nameacr string
 param tags object
 param location string = resourceGroup().location
 @allowed([
@@ -11,13 +10,13 @@ param roleAcrPull string = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 param prefix string
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' existing = {
-  name: 'aks-${clusterName}-${prefix}-${location}'
+  name: 'aks-${clusterName}-${prefix}'
 }
-output clusterPrincipalID string = aksCluster.properties.identityProfile.kubeletidentity.objectId
+
 
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: 'acr-${clusterName}-${prefix}-${location}'
+  name: nameacr
   location: location
   sku: {
     name: 'Standard'
@@ -28,12 +27,12 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-pr
   tags: tags
 }
  
-resource acr 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: 'acrrole-${clusterName}-${prefix}-${location}'
+resource assignAcrPullToAks 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name:  guid(resourceGroup().id, nameacr, 'assignAcrPullToAks')
   scope: containerRegistry
   properties: {
     description: 'Assign AcrPull role to AKS'
-    principalId: clusterPrincipalID
+    principalId: aksCluster.properties.identityProfile.kubeletidentity.objectId
     principalType: 'ServicePrincipal'
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleAcrPull)
   }

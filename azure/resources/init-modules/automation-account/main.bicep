@@ -8,10 +8,7 @@ param config object
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location
 
-resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = [for (account, index) in config.automationAccounts: if(contains(config.automationAccounts[index], 'managedIdentity')) {
-  name: account.managedIdentity.name
-  scope: contains(account.managedIdentity, 'resourceGroup') ? resourceGroup(account.managedIdentity.resourceGroup) : resourceGroup()
-}]
+
 module automationAccount 'modules/automation-account.bicep' = [for (account, index) in config.automationAccounts: {
   name: account.name
   params: {
@@ -23,6 +20,11 @@ module automationAccount 'modules/automation-account.bicep' = [for (account, ind
   dependsOn:[
     managedIdentity
   ]
+}]
+
+resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = [for (account, index) in config.automationAccounts: if(contains(config.automationAccounts[index], 'managedIdentity')) {
+  name: account.managedIdentity.name
+  scope: contains(account.managedIdentity, 'resourceGroup') ? resourceGroup(account.managedIdentity.resourceGroup) : resourceGroup()
 }]
 
 module schedule 'modules/schedule.bicep' =  [for (account, index) in config.automationAccounts: {

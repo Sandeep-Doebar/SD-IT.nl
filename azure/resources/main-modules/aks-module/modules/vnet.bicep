@@ -2,9 +2,9 @@ param location string = resourceGroup().location
 param prefix string
 param clusterName string
 @description('The virtual network name')
-param vnetName string = 'vnet-${clusterName}-${prefix}-${location}'
+param vnetName string = 'vnet-${clusterName}-${prefix}'
 @description('The name of the subnet')
-param subnetName string = 'snet-${clusterName}-${prefix}-${location}'
+param subnetName string = 'snet-${clusterName}-${prefix}'
 @description('The virtual network address prefixes')
 param vnetAddressPrefixes string
 @description('The subnet address prefix')

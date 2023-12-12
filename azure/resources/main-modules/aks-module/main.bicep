@@ -2,7 +2,6 @@
 param config object
 @description('Optional. Location for all resources.')
 param location string = resourceGroup().location
-param clusterPrincipalID string
 param sshPublicKey string
 module vnet 'modules/vnet.bicep' = [for vn in config.vnets: {
   name: vn.name
@@ -50,6 +49,7 @@ module aksCluster 'modules/aks.bicep' = [for aks in config.akservices: {
     networkPlugin: aks.networkPlugin
     enableAutoScaling: aks.enableAutoScaling
     noderesourcegroup: aks.noderesourcegroup
+    
   }
   dependsOn: [
     logAnalyticsWorkspace    
@@ -63,9 +63,9 @@ module acr 'modules/registry.bicep' = [for reg in config.registries: {
   params: {
     location: location
     prefix: reg.prefix
-    clusterPrincipalID: clusterPrincipalID
     tags: reg.tags
     clusterName: reg.clusterName
+    nameacr: reg.nameacr
 
   }
   dependsOn: [
