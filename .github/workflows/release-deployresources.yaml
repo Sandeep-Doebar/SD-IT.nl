@@ -9,11 +9,27 @@ on:
         options:
           - tst
           - prd
+      teknologi:
+        type: boolean
+        required: true
+        default: true
+      aks:
+        type: boolean
+        required: true
+        default: false
   workflow_call:
     inputs:
       environment:
         type: string
         required: true
+      teknologi:
+        type: boolean
+        required: true
+        default: true
+      aks:
+        type: boolean
+        required: true
+        default: false
   
 jobs:
   DeployInfra:
@@ -27,5 +43,7 @@ jobs:
       uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
       with:
         environment: ${{ inputs.environment }}
+        teknologi: ${{ inputs.teknologi }}
+        aks: ${{ inputs.aks }}
       env:
         AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}

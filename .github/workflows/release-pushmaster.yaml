@@ -10,4 +10,6 @@ jobs:
     uses: ./.github/workflows/release-deployresources.yaml
     with:
       environment: prd
+      teknologi: true
+      aks: false
     secrets: inherit

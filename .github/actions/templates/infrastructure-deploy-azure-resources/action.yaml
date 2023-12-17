@@ -3,6 +3,10 @@ name: "Deploy Azure Infra"
 inputs: 
   environment:
     required: true
+  teknologi:
+    required: true
+  aks:
+    required: true
 
 runs:
   using: "composite"
@@ -18,4 +22,4 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
-          .\azure\resources\RunDeployment.ps1 -configFile "..\configs\${{ inputs.environment }}.jsonc"
+          .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\${{ inputs.environment }}.jsonc -deployAKS ${{ inputs.aks }} -deployMain ${{ inputs.teknologi }}
