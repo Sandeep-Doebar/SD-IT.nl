@@ -3,8 +3,7 @@ name: Release - On push to main
 on:
   push:
     branches:
-      #- main
-      - test
+      - main
   
 jobs:
   deploy-resources:

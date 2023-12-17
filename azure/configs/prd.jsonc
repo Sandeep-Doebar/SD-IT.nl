@@ -1,17 +1,41 @@
 {
     "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d",
     "subscriptionId": "27e27c87-3431-4587-afa0-e36b64b597d7",
-    "resourceGroupName": "teknologi-eur1-prd-management",
     "location": "westeurope",
+    "resourceGroups": [
+        "teknologi-eur1-prd-management-rg",
+        "teknologi-eur1-prd-infra-rg",
+        "teknologi-eur1-prd-aks-rg"
+    ],
     "managedIdentities": [
         {
-            "name": "teknologi-eur1-prd-mi",
+            "name": "teknologi-eur1-prd-management-mi",
+            "resourceGroupName": "teknologi-eur1-prd-management-rg",
             "ownerOnResourceGroup": true
+        },
+        {
+            "name": "teknologi-eur1-prd-aks-mi",
+            "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+            "ownerOnResourceGroup": true
+        }
+    ],
+    "consumptionBudgets": [
+        {
+            "name": "teknologi-eur1-prd-budget",
+            "amount": 20,
+            "timeGrain": "Monthly",
+            "firstThreshold": 80,
+            "secondThreshold": 90,
+            "contactEmails": [
+                "ashwin.sarimin@gmail.com",
+                "ashwin.sarimin@outlook.com"
+            ]
         }
     ],
     "storageAccounts": [
         {
             "name": "teknologiprdsa",
+            "resourceGroupName": "teknologi-eur1-prd-management-rg",
             "sku": "Standard_LRS",
             "kind": "StorageV2",   
             "containerName": "teknologicontainer"
@@ -21,6 +45,7 @@
     "deploymentScripts": [
         {
             "name": "teknologi-eur1-prd-ds",
+            "resourceGroupName": "teknologi-eur1-prd-management-rg",
             "kind": "AzureCLI",
             "properties": {
                 "azCliVersion": "2.26.1",
@@ -37,9 +62,10 @@
     "automationAccounts": [
         {
             "name": "teknologi-eur1-prd-aa",
+            "resourceGroupName": "teknologi-eur1-prd-management-rg",
             "sku": "Free",
             "managedIdentity":{
-                "name": "teknologi-eur1-prd-mi"
+                "name": "teknologi-eur1-prd-management-mi"
             },
             "runbook": {
                 "name": "teknologi-eur1-prd-cleanup-rb",
@@ -52,9 +78,194 @@
                     "frequency": "Day"
                 },
                 "parameters": {
-                    "managementResourceGroup": "teknologi-eur1-prd-management",
-                    "aksResourceGroup": "teknologi-eur1-prd-aks"
+                    "managementResourceGroup": "teknologi-eur1-prd-management-rg",
+                    "infraResourceGroup": "teknologi-eur1-prd-infra-rg"
                 }          
+            }    
+        }
+    ],
+    "networkSecurityGroups": [
+        {
+          "name": "teknologi-eur1-prd-aks-nsg",
+          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+          "securityRules": [
+              {
+                  "name": "ASA-HOME",
+                  "properties": {
+                      "priority": 110,
+                      "access": "Allow",
+                      "direction": "Inbound",
+                      "destinationPortRange": "*",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "sourceAddressPrefixes": [
+                          "37.251.117.154"
+                      ],
+                      "destinationAddressPrefix": "*"
+                  }
+              },
+              {
+                  "name": "Internet",
+                  "properties": {
+                      "priority": 130,
+                      "access": "Allow",
+                      "direction": "Inbound",
+                      "destinationPortRanges": [
+                          "80",
+                          "443"
+                      ],
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "sourceAddressPrefix": "Internet",
+                      "destinationAddressPrefix": "*"
+                  }
+              }
+          ]
+        }
+    ],
+    "virtualNetworks": [
+        {
+          "name": "teknologi-eur1-prd-vnet",
+          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+          "addressPrefixes": [
+              "192.168.0.0/16"
+          ],
+          "subnets": [
+              {
+                  "name": "teknologi-eur1-prd-aks-subnet",
+                  "addressPrefix": "192.168.0.0/20",
+                  "serviceEndpoints": [ 
+                      "Microsoft.KeyVault",
+                      "Microsoft.ContainerRegistry",
+                      "Microsoft.Storage"
+                  ],
+                  "delegations": [], 
+                  "networkSecurityGroup": "teknologi-eur1-prd-aks-nsg",
+                  "natGateway": ""
+              }
+          ]
+        }
+    ],
+    "publicIPs": [
+        {
+          "name": "teknologi-eur1-prd-aks-ip",
+          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+          "sku": "Standard",
+          "allocationMethod": "Static",
+          "dnsLabelPrefix": ""
+        }
+    ],
+    "keyvaults": [
+        {
+          "name": "teknologi-eur1-prd-kv",
+          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+          "sku": "standard",
+          "publicNetworkAccess": "Enabled",
+          "managedIdentities": [
+            {
+                "name": "teknologi-eur1-prd-aks-mi",
+                "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+                "permissions": "manage"
+            }
+          ],
+          "aadObjects": [
+            {
+                "name": "admin@SARIMINnl.onmicrosoft.com",
+                "objectId": "ab5498ec-049a-4d72-96e9-aa435a644ef8",
+                "permissions": "manage"
+            }
+          ],
+          "autoGeneratedSecrets": [
+            "some-password",
+            "another-password"
+          ]
+        }
+    ],
+    "containerRegistries": [
+        {
+            "name": "teknologieur1prdacr",
+            "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+            "sku": "standard",
+            "adminUserEnabled": true,
+            "anonymousPullEnabled": false,
+            "managedIdentities": [
+                {
+                    "name": "teknologi-eur1-prd-aks-mi",
+                    "resourceGroupName": "teknologi-eur1-prd-aks-rg"
+                }
+            ]
+        }
+    ],
+    "aksClusters": [
+        {
+            "name": "teknologi-eur1-prd-aks",
+            "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+            "apiServerIpWhitelist": [],
+            "virtualNetwork": {
+                "name": "teknologi-eur1-prd-vnet",
+                "resourceGroupName": "teknologi-eur1-prd-aks-rg", 
+                "subnet": "teknologi-eur1-prd-aks-subnet"
+            },
+            "managedIdentity": {
+                "name": "teknologi-eur1-prd-aks-mi",
+                "resourceGroupName": "teknologi-eur1-prd-aks-rg"
+            },
+            "keyvault": {
+                "name": "teknologi-eur1-prd-kv",
+                "resourceGroupName": "teknologi-eur1-prd-aks-rg" 
+            },    
+            "publicIP": {
+                "name": "teknologi-eur1-prd-aks-ip",
+                "resourceGroupName": "teknologi-eur1-prd-aks-rg" 
+            },
+            "kubernetesVersion": "1.28",
+            "adminAadGroupId": "2d65b4db-a27a-4e3e-9968-3dff8d14298d",
+            "sshPublicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEApmjzvVy5qMgrlJUwS/CszMu4VLmTwYDCkiLDR52ePCSMmNrZ4ImMxBvHTFHNpxHiIq0H8qxaxygUfpE6yVhIOcudaF6YaIdZAZOcBJfYkUjhDcBkVHGB7jYTuQ2vS2MrybfRwOsB4oc0pf/0Zx6ACecN3aS63ovIbsPGxQ1LkwmVT/MnG5uxyFfwDBJRlUDwmS0ruxUy7Wdolx1yGdenBkg1eUrlCp4BTyOCPcy+YZ0yEWBKkCoQuE7nUfZcwS7ScL1NM/7HJHWqn3pW8pfqrnPs4rG75VOeamf/PERKVSzSpqPj4x/btjVUlO+x2TLvyX8sm6EfXeqqxOYKNF9Hhw== rsa-key-20230224",
+            "nodepools": [
+                {
+                    "type": "System",
+                    "name": "system",
+                    "taints": [],
+                    "nodeCount": 1,
+                    "size": "Standard_B2s",
+                    "useAvailabilityZones": false,
+                    "autoScalingOptions": {
+                        "enabled": false,
+                        "minNodeCount": 1,
+                        "maxNodeCount": 1
+                    },
+                    "operatingSystem": {
+                        "type": "Linux",
+                        "sku": "Ubuntu"
+                    }
+                },
+                {
+                    "type": "User",
+                    "name": "worker",
+                    "taints": [
+                        "pool=worker:NoSchedule"
+                    ],
+                    "nodeCount": 1,
+                    "size": "Standard_B2s",
+                    "useAvailabilityZones": false,
+                    "autoScalingOptions": {
+                        "enabled": false,
+                        "minNodeCount": 1,
+                        "maxNodeCount": 3
+                    },
+                    "operatingSystem": {
+                        "type": "Linux",
+                        "sku": "Ubuntu"
+                    }
+                }
+            ],    
+            "argoCd": {
+                "hostname": "argocd.teknologi.nl",
+                "servicePrincipalClientId": "e52097d2-1a09-48c2-9009-8ecf0d2ec184"
+            },    
+            "grafana": {
+                "hostname": "grafana.teknologi.nl",
+                "servicePrincipalClientId": "e52097d2-1a09-48c2-9009-8ecf0d2ec184"
             }
         }
     ]

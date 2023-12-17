@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - test
 
 env:
   configFile: ./azure/configs/tst.jsonc
@@ -27,50 +26,3 @@ jobs:
         with:
           moduleFolderPath: ./azure/resources/
           psrulePath: "./azure/resources/psrule"
-
-#  get-modules:
-#    uses: ./.github/workflows/get-modules.yaml
-#    with:
-#      folder: ./azure/resources/modules
-#  scan-modules: 
-#    needs: get-modules
-#    if: ${{ needs.get-modules.outputs.modules }}
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        module: ${{ fromJson(needs.get-modules.outputs.modules) }}
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#      - name: Get Module information
-#        uses: ./.github/actions/templates/get-module-information
-#        id: get-module-information
-#        with: 
-#          module: ${{ matrix.module }}
-#      - name: Create parameter file
-#        uses: ./.github/actions/templates/create-parameter-file
-#        id: create-parameter-file
-#        with: 
-#          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-#          deploymentConfigFile: ${{ env.configFile }}
-#      - name: PSRule validation
-#        uses: ./.github/actions/templates/validate-module-psrule
-#        with:
-#          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-#          psrulePath: "./azure/resources/psrule"
-#
-#
-
-#      - name: Change module folder path for bash
-#        id: change-folderpath
-#        shell: pwsh
-#        run: |
-#          $currentModuleFolderPath = '${{ steps.get-module-information.outputs.moduleFolderPath }}'
-#          $moduleFolderPath = $currentModuleFolderPath -replace "\\", "/"
-#          Write-Output ('{0}={1}' -f 'moduleFolderPath', $moduleFolderPath) >> $env:GITHUB_OUTPUT
-#      - name: Trivy scan
-#        uses: ./.github/actions/templates/registry-validate-module-trivy
-#        with:
-#          templateFolderPath: ${{ steps.change-folderpath.outputs.moduleFolderPath }}
-
-  
