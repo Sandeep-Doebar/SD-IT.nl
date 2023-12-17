@@ -1,91 +1,57 @@
 <#
 az login 
-.\RunDeployment.ps1 -initConfigFile "..\configs\init-tst.jsonc" -mainConfigFile "..\configs\main-tst.jsonc"
-.\RunDeployment.ps1 -initConfigFile "..\configs\init-prd.jsonc" -mainConfigFile "..\configs\main-prd.jsonc"
+##Deploy Teknologi infra resources
+.\RunDeployment.ps1 -configFile "..\configs\tst.jsonc"
+.\RunDeployment.ps1 -configFile "..\configs\prd.jsonc"
+
+##Deploy AKS resources
+.\RunDeployment.ps1 -configFile "..\configs\tst.jsonc" -deployAKS $true -deployMain $false
+.\RunDeployment.ps1 -configFile "..\configs\prd.jsonc" -deployAKS $true -deployMain $false
 #>
 
-#Variables
+#Parameters
 [CmdletBinding(PositionalBinding = $False)]
 param (
-    [string]$initConfigFile,
-    [string]$mainConfigFile,
+    [string]$configFile,
     [string]$bicepMainFile = "main.bicep",
-    [string]$bicepInitFile = "init.bicep",
-    [boolean]$runBicepInit = $true
+    [string]$bicepAKSFile = "aks.bicep",
+    [boolean]$deployMain = $true,
+    [boolean]$deployAKS = $false
 )
 
-#Stop script if try- catch failes
+#Stop script if try - catch failes
 $ErrorActionPreference = "Stop"
-$initJsonc = Get-Content -Path $initConfigFile -Raw
-$initJson = $initJsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
-$initJson | Out-File -FilePath ./initconfigtemp.json -Encoding utf8
 
-$initConfig = Get-Content ./initconfigtemp.json -Raw | ConvertFrom-Json -Depth 100
-
-$jsonc = Get-Content -Path $mainConfigFile -Raw
+$jsonc = Get-Content -Path $configFile -Raw
 $json = $jsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
 $json | Out-File -FilePath ./configtemp.json -Encoding utf8
+$config = Get-Content ./configtemp.json -Raw | ConvertFrom-Json -Depth 100
 
-$Config = Get-Content ./configtemp.json -Raw | ConvertFrom-Json -Depth 100
-
-$Components = New-Object System.Collections.Generic.List[System.String]
-
-[System.Action[string, action]] $ExecuteDeployment = {
-    param($DeploymentName, $Action)
-
-    Write-Host "Deploying: ${DeploymentName}" -ForegroundColor Cyan
-
-    try {
-        $Action.invoke()
+if($deployMain){
+    if(Test-Path -Path "$($PSScriptRoot)/$($bicepMainFile)"){
+        az deployment sub create `
+            --subscription $config.subscriptionId `
+            --location $config.location `
+            --template-file "$($PSScriptRoot)/$($bicepMainFile)" `
+            --parameters "config=`@./configtemp.json"
+        if (!$?) {
+            throw "Unable to deploy resources"
+        }
     }
-    catch {
-        Write-Host "Unable to deploy '${DeploymentName}':" -ForegroundColor Red
-        Throw $_ 
-    }
-    $Components.Add($DeploymentName)
-}
+}    
 
-#
-#Create resourcegroup if not existing
-#
-az group create --name $initConfig.resourceGroupName --location $initConfig.location
-
-#
-#Deploy Bicep Resources (init)
-#
-if($runBicepInit){
-    if(Test-Path -Path "$($PSScriptRoot)/$($bicepInitFile)"){
-        $ExecuteDeployment.invoke("Bicep resources", {
-            az deployment group create `
-                --resource-group $initConfig.ResourceGroupName `
-                --subscription $initConfig.SubscriptionId `
-                --template-file "$($PSScriptRoot)/$($bicepInitFile)" `
-                --parameters "config=`@./initconfigtemp.json"
-        
-            if (!$?) {
-                throw "Unable to deploy resources"
-            }
-        })    
-    }
-}
-
-#
-#Deploy Bicep Resources (main)
-#
-$ExecuteDeployment.invoke("Bicep resources", {
-    az deployment group create `
-        --resource-group $Config.ResourceGroupName `
-        --subscription $Config.SubscriptionId `
-        --template-file "$($PSScriptRoot)/$($bicepMainFile)" `
+if($deployAKS){
+    if(Test-Path -Path "$($PSScriptRoot)/$($bicepAKSFile)"){
+        az deployment sub create `
+        --subscription $config.subscriptionId `
+        --location $config.location `
+        --template-file "$($PSScriptRoot)/$($bicepAKSFile)" `
         --parameters "config=`@./configtemp.json"
+        
+        if (!$?) {
+            throw "Unable to deploy resources"
+        }
+    }    
+}
 
-    if (!$?) {
-        throw "Unable to deploy resources"
-    }
-})
-
-Write-Host 'Deployment finished. Installed components:' -ForegroundColor Green
-$Components
-
-Remove-Item ./initconfigtemp.json
 Remove-Item ./configtemp.json

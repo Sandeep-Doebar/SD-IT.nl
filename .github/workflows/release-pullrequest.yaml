@@ -3,81 +3,63 @@ name: On Pull request
 on:
   pull_request:
     branches:
-      #- main
+      - main
       - test
 
 env:
-  initConfigFile: ./azure/configs/init-tst.jsonc
-  mainConfigFile: ./azure/configs/main-tst.jsonc
+  configFile: ./azure/configs/tst.jsonc
 
 jobs:
-  ##INIT MODULES
-  get-init-modules:
-    uses: ./.github/workflows/get-modules.yaml
-    with:
-      folder: ./azure/resources/init-modules
-  scan-init-modules: 
-    needs: get-init-modules
-    if: ${{ needs.get-init-modules.outputs.modules }}
+  scan-modules:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: ${{ fromJson(needs.get-init-modules.outputs.modules) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Get Module information
-        uses: ./.github/actions/templates/get-module-information
-        id: get-module-information
-        with: 
-          module: ${{ matrix.module }}
-          deployment: init
       - name: Create parameter file
         uses: ./.github/actions/templates/create-parameter-file
         id: create-parameter-file
         with: 
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          deploymentConfigFile: ${{ env.initConfigFile }}
+          moduleFolderPath: ./azure/resources/
+          moduleFileName: main.bicep
+          deploymentConfigFile: ${{ env.configFile }}
       - name: PSRule validation
         uses: ./.github/actions/templates/validate-module-psrule
         with:
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          psrulePath: "./azure/resources/psrule"
-  
-  ##MAIN MODULES
-  get-main-modules:
-    uses: ./.github/workflows/get-modules.yaml
-    with:
-      folder: ./azure/resources/main-modules
-  scan-main-modules: 
-    needs: get-main-modules
-    if: ${{ needs.get-main-modules.outputs.modules }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: ${{ fromJson(needs.get-main-modules.outputs.modules) }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Get Module information
-        uses: ./.github/actions/templates/get-module-information
-        id: get-module-information
-        with: 
-          module: ${{ matrix.module }}
-          deployment: main
-      - name: Create parameter file
-        uses: ./.github/actions/templates/create-parameter-file
-        id: create-parameter-file
-        with: 
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          deploymentConfigFile: ${{ env.mainConfigFile }}
-      - name: PSRule validation
-        uses: ./.github/actions/templates/validate-module-psrule
-        with:
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+          moduleFolderPath: ./azure/resources/
           psrulePath: "./azure/resources/psrule"
 
-
+#  get-modules:
+#    uses: ./.github/workflows/get-modules.yaml
+#    with:
+#      folder: ./azure/resources/modules
+#  scan-modules: 
+#    needs: get-modules
+#    if: ${{ needs.get-modules.outputs.modules }}
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        module: ${{ fromJson(needs.get-modules.outputs.modules) }}
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Get Module information
+#        uses: ./.github/actions/templates/get-module-information
+#        id: get-module-information
+#        with: 
+#          module: ${{ matrix.module }}
+#      - name: Create parameter file
+#        uses: ./.github/actions/templates/create-parameter-file
+#        id: create-parameter-file
+#        with: 
+#          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+#          deploymentConfigFile: ${{ env.configFile }}
+#      - name: PSRule validation
+#        uses: ./.github/actions/templates/validate-module-psrule
+#        with:
+#          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+#          psrulePath: "./azure/resources/psrule"
+#
+#
 
 #      - name: Change module folder path for bash
 #        id: change-folderpath
