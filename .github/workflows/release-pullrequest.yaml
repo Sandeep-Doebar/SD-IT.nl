@@ -3,92 +3,26 @@ name: On Pull request
 on:
   pull_request:
     branches:
-      #- main
-      - test
+      - main
 
 env:
-  initConfigFile: ./azure/configs/init-tst.jsonc
-  mainConfigFile: ./azure/configs/main-tst.jsonc
+  configFile: ./azure/configs/tst.jsonc
 
 jobs:
-  ##INIT MODULES
-  get-init-modules:
-    uses: ./.github/workflows/get-modules.yaml
-    with:
-      folder: ./azure/resources/init-modules
-  scan-init-modules: 
-    needs: get-init-modules
-    if: ${{ needs.get-init-modules.outputs.modules }}
+  scan-modules:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: ${{ fromJson(needs.get-init-modules.outputs.modules) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Get Module information
-        uses: ./.github/actions/templates/get-module-information
-        id: get-module-information
-        with: 
-          module: ${{ matrix.module }}
-          deployment: init
       - name: Create parameter file
         uses: ./.github/actions/templates/create-parameter-file
         id: create-parameter-file
         with: 
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          deploymentConfigFile: ${{ env.initConfigFile }}
+          moduleFolderPath: ./azure/resources/
+          moduleFileName: main.bicep
+          deploymentConfigFile: ${{ env.configFile }}
       - name: PSRule validation
         uses: ./.github/actions/templates/validate-module-psrule
         with:
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
+          moduleFolderPath: ./azure/resources/
           psrulePath: "./azure/resources/psrule"
-  
-  ##MAIN MODULES
-  get-main-modules:
-    uses: ./.github/workflows/get-modules.yaml
-    with:
-      folder: ./azure/resources/main-modules
-  scan-main-modules: 
-    needs: get-main-modules
-    if: ${{ needs.get-main-modules.outputs.modules }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: ${{ fromJson(needs.get-main-modules.outputs.modules) }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Get Module information
-        uses: ./.github/actions/templates/get-module-information
-        id: get-module-information
-        with: 
-          module: ${{ matrix.module }}
-          deployment: main
-      - name: Create parameter file
-        uses: ./.github/actions/templates/create-parameter-file
-        id: create-parameter-file
-        with: 
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          deploymentConfigFile: ${{ env.mainConfigFile }}
-      - name: PSRule validation
-        uses: ./.github/actions/templates/validate-module-psrule
-        with:
-          moduleFolderPath: ${{ steps.get-module-information.outputs.moduleFolderPath }}
-          psrulePath: "./azure/resources/psrule"
-
-
-
-#      - name: Change module folder path for bash
-#        id: change-folderpath
-#        shell: pwsh
-#        run: |
-#          $currentModuleFolderPath = '${{ steps.get-module-information.outputs.moduleFolderPath }}'
-#          $moduleFolderPath = $currentModuleFolderPath -replace "\\", "/"
-#          Write-Output ('{0}={1}' -f 'moduleFolderPath', $moduleFolderPath) >> $env:GITHUB_OUTPUT
-#      - name: Trivy scan
-#        uses: ./.github/actions/templates/registry-validate-module-trivy
-#        with:
-#          templateFolderPath: ${{ steps.change-folderpath.outputs.moduleFolderPath }}
-
-  

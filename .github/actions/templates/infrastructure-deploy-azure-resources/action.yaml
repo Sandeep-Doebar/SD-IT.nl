@@ -18,4 +18,4 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
-          .\azure\resources\RunDeployment.ps1 -initConfigFile .\azure\configs\init-${{ inputs.environment }}.jsonc -mainConfigFile .\azure\configs\main-${{ inputs.environment }}.jsonc
+          .\azure\resources\RunDeployment.ps1 -configFile "..\configs\${{ inputs.environment }}.jsonc"

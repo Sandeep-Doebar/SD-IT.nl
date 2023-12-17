@@ -4,7 +4,7 @@ Param
   [string] $managementResourceGroup,
 
   [Parameter (Mandatory= $true)]
-  [string] $aksResourceGroup,
+  [string] $infraResourceGroup,
 
   [Parameter (Mandatory= $true)]
   [string] $identity
@@ -21,7 +21,7 @@ $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -Defa
 
 $allResourceGroups = Get-AzResourceGroup
 
-$resourceGroups = @($aksResourceGroup, $managementResourceGroup)
+$resourceGroups = @($infraResourceGroup, $managementResourceGroup)
 
 foreach ($group in $allResourceGroups){
   if($resourceGroups -contains $group.ResourceGroupName){
