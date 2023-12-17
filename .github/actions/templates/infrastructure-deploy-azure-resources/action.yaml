@@ -22,4 +22,4 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
-          .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\${{ inputs.environment }}.jsonc -deployAKS ${{ inputs.aks }} -deployMain ${{ inputs.teknologi }}
+          .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\${{ inputs.environment }}.jsonc -deployAKS $${{ inputs.aks }} -deployMain $${{ inputs.teknologi }}
