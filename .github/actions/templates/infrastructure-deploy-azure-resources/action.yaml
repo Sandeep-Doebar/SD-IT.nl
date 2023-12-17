@@ -8,6 +8,9 @@ inputs:
   aks:
     required: true
 
+env:
+  AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}
+
 runs:
   using: "composite"
   steps:
