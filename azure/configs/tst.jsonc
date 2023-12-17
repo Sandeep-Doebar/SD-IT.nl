@@ -181,6 +181,22 @@
           ]
         }
     ],
+    "staticSites": [
+        {
+            "name": "teknologi-eur1-tst-swa",
+            "resourceGroupName": "teknologi-eur1-tst-infra-rg",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "reposityURL": "",
+            "reposityToken": "",
+            "repositoryBranch": "",
+            "stagingEnvironmentPolicy": "Enabled",
+            "allowConfigFileUpdates": true,
+            "appBuildCommand": "npm run build"
+        }
+    ],
     "containerRegistries": [
         {
             "name": "teknologieur1tstacr",

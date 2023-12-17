@@ -79,3 +79,19 @@ module automationAccount './modules/automation-account/main.bicep' = [for accoun
     deploymentScripts
   ]
 }]
+
+module staticWebApp './modules/static-site/main.bicep' = [for site in config.staticSites: {
+  name: 'main-${site.name}'
+  scope: resourceGroup(site.resourceGroupName)
+  params: {
+    name: site.name
+    location: location
+    sku: site.sku
+    reposityURL: site.reposityURL
+    reposityToken: site.reposityToken
+    repositoryBranch: site.repositoryBranch
+    stagingEnvironmentPolicy: site.stagingEnvironmentPolicy
+    allowConfigFileUpdates: site.allowConfigFileUpdates
+    appBuildCommand: site.appBuildCommand
+  }
+}]
