@@ -43,6 +43,9 @@ module storageAccounts './modules/storage-account/main.bicep' = [for sa in confi
     kind: sa.kind
     sku: sa.sku
    }
+   dependsOn:[
+    resourceGroups
+  ]
 }]
 
 

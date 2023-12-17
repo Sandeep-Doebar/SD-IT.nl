@@ -1,0 +1,28 @@
+name: Release - Dispatch to main
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        required: true
+        options:
+          - tst
+          - prd
+      teknologi:
+        type: boolean
+        required: true
+        default: true
+      aks:
+        type: boolean
+        required: true
+        default: false
+  
+jobs:
+  deploy-resources:
+    uses: ./.github/workflows/release-deployresources.yaml
+    with:
+      environment: ${{ inputs.environment }}
+      teknologi: ${{ inputs.teknologi }}
+      aks: ${{ inputs.aks }}
+    secrets: inherit

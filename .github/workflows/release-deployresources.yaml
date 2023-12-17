@@ -1,22 +1,6 @@
 name: Release - Deploy resources
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        required: true
-        options:
-          - tst
-          - prd
-      teknologi:
-        type: boolean
-        required: true
-        default: true
-      aks:
-        type: boolean
-        required: true
-        default: false
   workflow_call:
     inputs:
       environment:
