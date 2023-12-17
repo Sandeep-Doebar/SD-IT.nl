@@ -35,3 +35,5 @@ runs:
         }
         $paramFile = (Join-Path '${{ inputs.moduleFolderPath }}' "main.parameters.json")
         Set-Content -Path $paramFile -Value (ConvertTo-Json $newJson -Depth 100) -Confirm:$false
+
+        Get-Content -path $paramFile
