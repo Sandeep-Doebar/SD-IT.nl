@@ -1,30 +1,32 @@
 param name string
 param location string
 param sku object
-param reposityURL string
-param reposityToken string
-param repositoryBranch string
-param stagingEnvironmentPolicy string
-param allowConfigFileUpdates bool
-param appBuildCommand string = 'npm run build'
+param keyVault object
+
 
 //Deploy Static Web App
 resource staticAppService 'Microsoft.Web/staticSites@2021-02-01' = {
   name: name
   location: location
-  identity: {
-    type: 'SystemAssigned'
+  sku: {
+    name: sku.name
+    tier: sku.tier
   }
-  sku: sku
-  properties:{
-    provider: 'GitHub'
-    repositoryUrl: reposityURL
-    repositoryToken: reposityToken
-    branch: repositoryBranch
-    stagingEnvironmentPolicy: stagingEnvironmentPolicy
-    allowConfigFileUpdates: allowConfigFileUpdates
-    buildProperties: {
-      appBuildCommand: appBuildCommand
-    }
+  properties: {
+    stagingEnvironmentPolicy: 'Enabled'
+    allowConfigFileUpdates: true
+    provider: 'None'
+    enterpriseGradeCdnStatus: 'Disabled'
+  }
+}
+
+
+module keyVaultSecretDeploymentToken '../../keyvault/modules/secrets.bicep' = {
+  name: 'secretDeploymentToken-${name}'
+  scope: resourceGroup(keyVault.resourceGroupName)
+  params: {
+    keyVaultName: keyVault.name
+    secretName: '${name}-deploymentToken'
+    secretValue: staticAppService.listSecrets().properties.apiKey
   }
 }
