@@ -45,6 +45,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.BICEP_GITHUBACTIONS_iO }}
+          enable-AzPSSession: true
+      - name: Get AKS context
+        uses: azure/aks-set-context@v3
+        with:
+          cluster-name: ${{ inputs.clustername }}
+          resource-group: ${{ inputs.resourcegroup }}
+          admin: 'true'
+          use-kubelogin: 'false'
       - name: Configure Ingress Nginx
         uses: ./.github/actions/templates/k8s-deploy-nginx-ingress
         id: deploy-nginx-ingress

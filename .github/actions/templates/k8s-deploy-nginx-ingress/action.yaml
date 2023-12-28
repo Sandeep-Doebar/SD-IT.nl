@@ -9,18 +9,18 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ env.AZURE_CREDENTIALS }}
-        enable-AzPSSession: true
-    - name: Get AKS context
-      uses: azure/aks-set-context@v3
-      with:
-        cluster-name: ${{ inputs.clustername }}
-        resource-group: ${{ inputs.resourcegroup }}
-        admin: 'true'
-        use-kubelogin: 'false'
+    #- name: Azure Login
+    #  uses: azure/login@v1
+    #  with:
+    #    creds: ${{ env.AZURE_CREDENTIALS }}
+    #    enable-AzPSSession: true
+    #- name: Get AKS context
+    #  uses: azure/aks-set-context@v3
+    #  with:
+    #    cluster-name: ${{ inputs.clustername }}
+    #    resource-group: ${{ inputs.resourcegroup }}
+    #    admin: 'true'
+    #    use-kubelogin: 'false'
     - name: Configure Nginx Ingress
       shell: bash
       run: |
