@@ -39,55 +39,14 @@ runs:
           $newValue 
           $yamlContent = $yamlContent -replace [regex]::Escape($placeholder), $newValue
         }
-
-        $yamlContent 
-
+        $yamlContent
         $yamlContent | Set-Content $argoCDYamlFile -Force
-    
-
-#- task: HelmDeploy@0
-#  displayName: "ArgoCD: Add helm repo argo-helm"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: repo 
-#    arguments: add argo https://argoproj.github.io/argo-helm
-#- task: HelmDeploy@0
-#  displayName: "ArgoCD: Helm Repo update"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: repo
-#    arguments: update
-#- task: HelmDeploy@0
-#  displayName: "ArgoCD: Helm upgrade-install"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    chartType: Name
-#    chartName: argo/argo-cd
-#    version: 5.6.0
-#    releaseName: argocd
-#    valueFile: $(Build.SourcesDirectory)/azure/resources/kubernetes/argocd.yaml
-#    waitForExecution: false
-#    command: upgrade
-#    arguments: -n argocd --install --create-namespace
-#- task: Kubernetes@1
-#  displayName: "ArgoCD: Install ACR helm repo"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: apply
-#    arguments: -f $(Build.SourcesDirectory)/azure/resources/kubernetes/acr-helm-repo.yaml
+    - name: Configure ArgoCD
+      shell: bash
+      run: |
+        helm upgrade --install argocd argo/argo-cd \
+          --namespace argocd \
+          --version 5.6.0 \
+          --create-namespace \
+          --install \
+          --values ./azure/resources/kubernetes/argocd.yaml
