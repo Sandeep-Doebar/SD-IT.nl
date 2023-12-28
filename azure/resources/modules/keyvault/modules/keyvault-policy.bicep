@@ -2,7 +2,6 @@ param keyvaultName string
 param managedIdentities array = []
 param permissionsGet object
 param permissionsManage object
-param permissionsServicePrincipal object
 param aadObjects array = []
 
 resource keyvault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
@@ -15,7 +14,7 @@ resource managedIdentitiesArray 'Microsoft.ManagedIdentity/userAssignedIdentitie
 }]
 
 module accessPolicyIdentities 'construct-policy.bicep' = [for (identity, index) in managedIdentities: {
-  name: '${keyvault.name}-${identity.name}'
+  name: guid('${keyvault.name}-${identity.name}')
   params: {
     keyVaultName: keyvault.name
     permissions: (identity.permissions == 'get') ? permissionsGet : permissionsManage
@@ -24,7 +23,7 @@ module accessPolicyIdentities 'construct-policy.bicep' = [for (identity, index) 
 }]
 
 module aadObjectsIdentities 'construct-policy.bicep' = [for identity in aadObjects: {
-  name: '${keyvault.name}-${identity.name}'
+  name: guid('${keyvault.name}-${identity.name}')
   params: {
     keyVaultName: keyvault.name
     permissions: (identity.permissions == 'get') ? permissionsGet : permissionsManage

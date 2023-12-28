@@ -1,5 +1,6 @@
 param name string
 param ownerOnResourceGroup bool
+param contributorOnSubscription bool
 param location string = resourceGroup().location
 
 module managedIdentity 'modules/managed-identity.bicep' = {
@@ -8,5 +9,6 @@ module managedIdentity 'modules/managed-identity.bicep' = {
     name: name
     location: location
     ownerOnResourceGroup: ownerOnResourceGroup
+    contributorOnSubscription: contributorOnSubscription
   }
 }
