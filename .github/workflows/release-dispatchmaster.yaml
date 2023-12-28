@@ -12,7 +12,7 @@ on:
       teknologi:
         type: boolean
         required: true
-        default: true
+        default: false
       aks-infrastructure:
         type: boolean
         required: true
@@ -23,6 +23,7 @@ on:
         default: false  
 jobs:
   deploy-resources:
+    if: inputs.teknologi == true || inputs.aks-infrastructure == true
     uses: ./.github/workflows/release-deployresources.yaml
     with:
       environment: ${{ inputs.environment }}
@@ -30,6 +31,7 @@ jobs:
       aks: ${{ inputs.aks-infrastructure }}
     secrets: inherit
   get-aks-clusters-to-configure:
+    if: inputs.aks-configuration == true
     uses: ./.github/workflows/aks-get-clusters.yaml
     with:
       environment: ${{ inputs.environment }}
