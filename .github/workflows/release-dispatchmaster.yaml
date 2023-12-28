@@ -52,4 +52,4 @@ jobs:
           clustername: ${{ matrix.cluster.name }}
           resourcegroup: ${{ matrix.cluster.resourceGroupName }}
         env:
-          AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_DEVOPS }}
+          AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_iO }}
