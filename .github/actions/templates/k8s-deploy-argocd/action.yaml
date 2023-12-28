@@ -44,6 +44,8 @@ runs:
     - name: Configure ArgoCD
       shell: bash
       run: |
+        helm repo add argo https://argoproj.github.io/argo-helm
+        helm repo update
         helm upgrade --install argocd argo/argo-cd \
           --namespace argocd \
           --version 5.6.0 \
