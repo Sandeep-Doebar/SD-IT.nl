@@ -31,6 +31,8 @@ jobs:
     secrets: inherit
   get-aks-clusters-to-configure:
     uses: ./.github/workflows/aks-get-clusters.yaml
+    with:
+      environment: ${{ inputs.environment }}
   configure-aks-cluster:
     needs: get-aks-clusters-to-configure
     if: ${{ needs.get-aks-clusters-to-configure.outputs.clusters }}
