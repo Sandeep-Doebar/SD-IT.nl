@@ -28,4 +28,4 @@ runs:
       with:
         action: deploy
         manifests: |
-          ./azure/resources/kubernetes/issuer-prod.yaml -n kube-system --validate=false
+          ./azure/resources/kubernetes/issuer-prod.yaml

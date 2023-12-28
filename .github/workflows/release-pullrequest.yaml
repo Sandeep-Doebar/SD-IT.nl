@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  configFile: ./azure/configs/tst.jsonc
+  configFile: ./azure/configs/prd.jsonc
 
 jobs:
   scan-modules:
