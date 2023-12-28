@@ -53,3 +53,11 @@ jobs:
           resourcegroup: ${{ matrix.cluster.resourceGroupName }}
         env:
           AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_iO }}
+      - name: Configure Let's Encrypt
+        uses: ./.github/actions/templates/k8s-deploy-letsencrypt
+        id: deploy-letsencrypt
+        with: 
+          clustername: ${{ matrix.cluster.name }}
+          resourcegroup: ${{ matrix.cluster.resourceGroupName }}
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_iO }}

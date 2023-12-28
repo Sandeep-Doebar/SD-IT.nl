@@ -1,4 +1,4 @@
-name: "Deploy Azure Infra"
+name: "Deploy Nginx Ingress"
 
 inputs: 
   clustername:
@@ -14,10 +14,6 @@ runs:
       with:
         creds: ${{ env.AZURE_CREDENTIALS }}
         enable-AzPSSession: true
-    #- name: Set up kubelogin for non-interactive login
-    #  uses: azure/use-kubelogin@v1
-    #  with:
-    #    kubelogin-version: 'v0.0.24'
     - name: Get AKS context
       uses: azure/aks-set-context@v3
       with:
