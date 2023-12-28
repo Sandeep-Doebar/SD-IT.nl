@@ -21,17 +21,31 @@
             "contributorOnSubscription": false
         }
     ],
-    "consumptionBudgets": [
+    "keyvaults": [
         {
-            "name": "teknologi-eur1-tst-budget",
-            "amount": 20,
-            "timeGrain": "Monthly",
-            "firstThreshold": 80,
-            "secondThreshold": 90,
-            "contactEmails": [
-                "ashwin.sarimin@gmail.com",
-                "ashwin.sarimin@outlook.com"
-            ]
+          "name": "teknologi-eur1-tst-kv",
+          "resourceGroupName": "teknologi-eur1-tst-management-rg",
+          "sku": "standard",
+          "publicNetworkAccess": "Enabled",
+          "managedIdentities": [
+            {
+                "name": "teknologi-eur1-tst-management-mi",
+                "resourceGroupName": "teknologi-eur1-tst-management-rg",
+                "permissions": "manage"
+            }
+          ],
+          "aadObjects": [
+            {
+                "name": "admin@SARIMINnl.onmicrosoft.com",
+                "objectId": "ab5498ec-049a-4d72-96e9-aa435a644ef8",
+                "permissions": "manage"
+            },
+            {
+                "name": "BICEP_GITHUBACTIONS_TEKNOLOGI",
+                "objectId": "094f66a3-e47c-47dd-a8eb-1051c7aaaa71",
+                "permissions": "manage"
+            }
+          ]
         }
     ],
     "storageAccounts": [
@@ -87,6 +101,48 @@
             }    
         }
     ],
+    "staticSites": [
+        {
+            "name": "teknologi-eur1-tst-swa",
+            "resourceGroupName": "teknologi-eur1-tst-infra-rg",
+            "customDomainName": "tst.teknologi.nl",
+            "sku": {
+                "name": "Free",
+                "tier": "Free"
+            },
+            "identity": {
+                "name": "teknologi-eur1-tst-management-mi",
+                "resourceGroupName": "teknologi-eur1-tst-management-rg"
+            },
+            "keyVault": {
+                "name": "teknologi-eur1-tst-kv",
+                "resourceGroupName": "teknologi-eur1-tst-management-rg"
+            }
+        }
+    ],
+    "virtualNetworks": [
+        {
+          "name": "teknologi-eur1-tst-vnet",
+          "resourceGroupName": "teknologi-eur1-tst-aks-rg",
+          "addressPrefixes": [
+              "192.168.0.0/16"
+          ],
+          "subnets": [
+              {
+                  "name": "teknologi-eur1-tst-aks-subnet",
+                  "addressPrefix": "192.168.0.0/20",
+                  "serviceEndpoints": [ 
+                      "Microsoft.KeyVault",
+                      "Microsoft.ContainerRegistry",
+                      "Microsoft.Storage"
+                  ],
+                  "delegations": [], 
+                  "networkSecurityGroup": "teknologi-eur1-tst-aks-nsg",
+                  "natGateway": ""
+              }
+          ]
+        }
+    ],
     "networkSecurityGroups": [
         {
           "name": "teknologi-eur1-tst-aks-nsg",
@@ -126,29 +182,6 @@
           ]
         }
     ],
-    "virtualNetworks": [
-        {
-          "name": "teknologi-eur1-tst-vnet",
-          "resourceGroupName": "teknologi-eur1-tst-aks-rg",
-          "addressPrefixes": [
-              "192.168.0.0/16"
-          ],
-          "subnets": [
-              {
-                  "name": "teknologi-eur1-tst-aks-subnet",
-                  "addressPrefix": "192.168.0.0/20",
-                  "serviceEndpoints": [ 
-                      "Microsoft.KeyVault",
-                      "Microsoft.ContainerRegistry",
-                      "Microsoft.Storage"
-                  ],
-                  "delegations": [], 
-                  "networkSecurityGroup": "teknologi-eur1-tst-aks-nsg",
-                  "natGateway": ""
-              }
-          ]
-        }
-    ],
     "publicIPs": [
         {
           "name": "teknologi-eur1-tst-aks-ip",
@@ -156,47 +189,6 @@
           "sku": "Standard",
           "allocationMethod": "Static",
           "dnsLabelPrefix": ""
-        }
-    ],
-    "keyvaults": [
-        {
-          "name": "teknologi-eur1-tst-kv",
-          "resourceGroupName": "teknologi-eur1-tst-management-rg",
-          "sku": "standard",
-          "publicNetworkAccess": "Enabled",
-          "managedIdentities": [
-            {
-                "name": "teknologi-eur1-tst-management-mi",
-                "resourceGroupName": "teknologi-eur1-tst-management-rg",
-                "permissions": "manage"
-            }
-          ],
-          "aadObjects": [
-            {
-                "name": "admin@SARIMINnl.onmicrosoft.com",
-                "objectId": "ab5498ec-049a-4d72-96e9-aa435a644ef8",
-                "permissions": "manage"
-            },
-            {
-                "name": "BICEP_GITHUBACTIONS_TEKNOLOGI",
-                "objectId": "094f66a3-e47c-47dd-a8eb-1051c7aaaa71",
-                "permissions": "manage"
-            }
-          ]
-        }
-    ],
-    "staticSites": [
-        {
-            "name": "teknologi-eur1-tst-swa",
-            "resourceGroupName": "teknologi-eur1-tst-infra-rg",
-            "sku": {
-                "name": "Free",
-                "tier": "Free"
-            },
-            "keyVault": {
-                "name": "teknologi-eur1-tst-kv",
-                "resourceGroupName": "teknologi-eur1-tst-management-rg"
-            }
         }
     ],
     "containerRegistries": [
