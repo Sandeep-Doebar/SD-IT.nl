@@ -1,98 +1,31 @@
 name: "Deploy Let's Encrypt"
 
-inputs: 
-  clustername:
-    required: true
-  resourcegroup:
-    required: true
-
 runs:
   using: "composite"
   steps:
-    #- name: Azure Login
-    #  uses: azure/login@v1
-    #  with:
-    #    creds: ${{ env.AZURE_CREDENTIALS }}
-    #    enable-AzPSSession: true
-    #- name: Get AKS context
-    #  uses: azure/aks-set-context@v3
-    #  with:
-    #    cluster-name: ${{ inputs.clustername }}
-    #    resource-group: ${{ inputs.resourcegroup }}
-    #    admin: 'true'
-    #    use-kubelogin: 'false'
-
     - name: Add namespace cert-manager
       uses: Azure/k8s-deploy@v4
       with:
         action: deploy
         manifests: |
           ./azure/resources/kubernetes/cert-manager.yaml
-    
-#
-#steps:
-#- task: Kubernetes@1
-#  displayName: "Letsencrypt: Add namespace cert-manager"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: apply
-#    arguments: -f $(Build.SourcesDirectory)/azure/resources/kubernetes/cert-manager.yaml
-#- task: Kubernetes@1
-#  displayName: "Letsencrypt: kubectl disable-validation"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: label
-#    arguments: namespace cert-manager certmanager.k8s.io/disable-validation=true --overwrite=true
-#- task: HelmDeploy@0
-#  displayName: "Letsencrypt: Add helm repo charts.jetstack.io"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: repo 
-#    arguments: add jetstack https://charts.jetstack.io
-#- task: HelmDeploy@0
-#  displayName: "Letsencrypt: Helm Repo update"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: repo
-#    arguments: update
-#- task: HelmDeploy@0
-#  displayName: "Letsencrypt: install cert-manager"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    chartType: Name
-#    chartName: jetstack/cert-manager
-#    version: 1.11.0
-#    releaseName: cert-manager
-#    waitForExecution: false
-#    command: upgrade
-#    arguments: -n cert-manager --install --set installCRDs=true
-#- task: Kubernetes@1
-#  displayName: "Letsencrypt: Create letsencrypt-prod Issuer"
-#  inputs:
-#    connectionType: Azure Resource Manager
-#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-#    azureResourceGroup: ${{ parameters.resourceGroupName }}
-#    kubernetesCluster: ${{ parameters.aksClusterName }}
-#    useClusterAdmin: true
-#    command: apply
-#    arguments: -f $(Build.SourcesDirectory)/azure/resources/kubernetes/issuer-prod.yaml -n kube-system --validate=false
+    - name: Kubectl disable-validation
+      shell: bash
+      run: |
+        kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true --overwrite=true
+    - name: Configure Let's Encrypt
+      shell: bash
+      run: |
+        helm repo add jetstack https://charts.jetstack.io
+        helm repo update
+        helm upgrade --install cert-manager jetstack/cert-manager \
+          --namespace cert-manager \
+          --version 1.11.0 \
+          --install \
+          --set installCRDs=true
+    - name: Add namespace cert-manager
+      uses: Azure/k8s-deploy@v4
+      with:
+        action: deploy
+        manifests: |
+          ./azure/resources/kubernetes/issuer-prod.yaml -n kube-system --validate=false
