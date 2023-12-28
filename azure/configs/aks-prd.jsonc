@@ -146,7 +146,8 @@
             },
             "keyvault": {
                 "name": "teknologi-eur1-aks-kv",
-                "resourceGroupName": "teknologi-eur1-prd-aks-rg" 
+                "resourceGroupName": "teknologi-eur1-prd-aks-rg", 
+                "ssoSecretName": "SsoServicePrincipalClientSecret"
             },    
             "publicIP": {
                 "name": "teknologi-eur1-prd-aks-ip",
@@ -193,7 +194,7 @@
                         "sku": "Ubuntu"
                     }
                 }
-            ],    
+            ],   
             "argoCd": {
                 "hostname": "argocd.sarimink8s.nl",
                 "servicePrincipalClientId": "705277dd-c190-4d53-a0b7-456b8620b131" //iO

@@ -20,99 +20,74 @@ runs:
     - name: Replace values in ArgoCD manifest file
       shell: pwsh
       run: |
+        $argoCDYamlFile = "./azure/resources/kubernetes/argocd.yaml"
+        $yamlContent = Get-Content $argoCDYamlFile -Raw
 
-        [string]$filePath = "path/to/your/file.txt"
+        $parameters = @{
+          ingressClass = ${{ inputs.ingressClass }}
+          hostName = ${{ inputs.hostName }}
+          tenantId = ${{ inputs.tenantId }}
+          ServicePrincipalClientId = ${{ inputs.ServicePrincipalClientId }}
+          SsoServicePrincipalClientSecret = ${{ inputs.SsoServicePrincipalClientSecret }}
+          AdminAadGroupId = ${{ inputs.AdminAadGroupId }}
+        }
 
-        '${{ inputs.deploymentConfigFile }}'
+        foreach ($key in $parameters.Keys) {
+          $placeholder = '$(' + $key + ')'
+          $placeholder 
+          $newValue = $parameters[$key]
+          $newValue 
+          $yamlContent = $yamlContent -replace [regex]::Escape($placeholder), $newValue
+        }
 
+        $yamlContent 
 
-        # Read the content of the file
-        $fileContent = Get-Content $filePath -Raw
-
-      # Define tokens to be replaced
-      $tokens = @("$(parameter1)", "$(parameter2)")
-
-      # Replace tokens with actual values
-      foreach ($token in $tokens) {
-          # Replace the token with an actual value
-          $actualValue = "YourReplacementValueFor_$($token)"
-          $fileContent = $fileContent -replace [regex]::Escape($token), $actualValue
-      }
-
-      # Write the modified content back to the file
-      $fileContent | Set-Content $filePath -Force
+        $yamlContent | Set-Content $argoCDYamlFile -Force
     
 
-
-  ######################
-
-  parameters:
-  - name: armServiceConnection
-    type: string
-  - name: resourceGroupName
-    type: string
-  - name: aksClusterName
-    type: string
-  - name: acrName
-    type: string
-  - name: acrResourceGroup
-    type: string
-  - name: environment
-    type: string
-
-- task: replacetokens@3
-  displayName: "ArgoCD: Replace tokens in configs"
-  inputs:
-    targetFiles: |
-      $(Build.SourcesDirectory)/azure/resources/kubernetes/argocd.yaml
-      $(Build.SourcesDirectory)/azure/resources/kubernetes/acr-helm-repo.yaml
-    tokenPrefix: '$('
-    tokenSuffix: ')'
-    keepToken: true
-    verbosity: 'detailed'
-- task: HelmDeploy@0
-  displayName: "ArgoCD: Add helm repo argo-helm"
-  inputs:
-    connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-    azureResourceGroup: ${{ parameters.resourceGroupName }}
-    kubernetesCluster: ${{ parameters.aksClusterName }}
-    useClusterAdmin: true
-    command: repo 
-    arguments: add argo https://argoproj.github.io/argo-helm
-- task: HelmDeploy@0
-  displayName: "ArgoCD: Helm Repo update"
-  inputs:
-    connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-    azureResourceGroup: ${{ parameters.resourceGroupName }}
-    kubernetesCluster: ${{ parameters.aksClusterName }}
-    useClusterAdmin: true
-    command: repo
-    arguments: update
-- task: HelmDeploy@0
-  displayName: "ArgoCD: Helm upgrade-install"
-  inputs:
-    connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-    azureResourceGroup: ${{ parameters.resourceGroupName }}
-    kubernetesCluster: ${{ parameters.aksClusterName }}
-    useClusterAdmin: true
-    chartType: Name
-    chartName: argo/argo-cd
-    version: 5.6.0
-    releaseName: argocd
-    valueFile: $(Build.SourcesDirectory)/azure/resources/kubernetes/argocd.yaml
-    waitForExecution: false
-    command: upgrade
-    arguments: -n argocd --install --create-namespace
-- task: Kubernetes@1
-  displayName: "ArgoCD: Install ACR helm repo"
-  inputs:
-    connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
-    azureResourceGroup: ${{ parameters.resourceGroupName }}
-    kubernetesCluster: ${{ parameters.aksClusterName }}
-    useClusterAdmin: true
-    command: apply
-    arguments: -f $(Build.SourcesDirectory)/azure/resources/kubernetes/acr-helm-repo.yaml
+#- task: HelmDeploy@0
+#  displayName: "ArgoCD: Add helm repo argo-helm"
+#  inputs:
+#    connectionType: Azure Resource Manager
+#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
+#    azureResourceGroup: ${{ parameters.resourceGroupName }}
+#    kubernetesCluster: ${{ parameters.aksClusterName }}
+#    useClusterAdmin: true
+#    command: repo 
+#    arguments: add argo https://argoproj.github.io/argo-helm
+#- task: HelmDeploy@0
+#  displayName: "ArgoCD: Helm Repo update"
+#  inputs:
+#    connectionType: Azure Resource Manager
+#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
+#    azureResourceGroup: ${{ parameters.resourceGroupName }}
+#    kubernetesCluster: ${{ parameters.aksClusterName }}
+#    useClusterAdmin: true
+#    command: repo
+#    arguments: update
+#- task: HelmDeploy@0
+#  displayName: "ArgoCD: Helm upgrade-install"
+#  inputs:
+#    connectionType: Azure Resource Manager
+#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
+#    azureResourceGroup: ${{ parameters.resourceGroupName }}
+#    kubernetesCluster: ${{ parameters.aksClusterName }}
+#    useClusterAdmin: true
+#    chartType: Name
+#    chartName: argo/argo-cd
+#    version: 5.6.0
+#    releaseName: argocd
+#    valueFile: $(Build.SourcesDirectory)/azure/resources/kubernetes/argocd.yaml
+#    waitForExecution: false
+#    command: upgrade
+#    arguments: -n argocd --install --create-namespace
+#- task: Kubernetes@1
+#  displayName: "ArgoCD: Install ACR helm repo"
+#  inputs:
+#    connectionType: Azure Resource Manager
+#    azureSubscriptionEndpoint: ${{ parameters.armServiceConnection }}
+#    azureResourceGroup: ${{ parameters.resourceGroupName }}
+#    kubernetesCluster: ${{ parameters.aksClusterName }}
+#    useClusterAdmin: true
+#    command: apply
+#    arguments: -f $(Build.SourcesDirectory)/azure/resources/kubernetes/acr-helm-repo.yaml
