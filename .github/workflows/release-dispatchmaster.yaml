@@ -53,8 +53,8 @@ jobs:
       - name: Get AKS context
         uses: azure/aks-set-context@v3
         with:
-          cluster-name: ${{ inputs.clustername }}
-          resource-group: ${{ inputs.resourcegroup }}
+          cluster-name: ${{ matrix.cluster.name }}
+          resource-group: ${{ matrix.cluster.resourceGroupName }}
           admin: 'true'
           use-kubelogin: 'false'
       - name: Configure Ingress Nginx
