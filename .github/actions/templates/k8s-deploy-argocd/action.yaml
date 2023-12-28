@@ -24,12 +24,12 @@ runs:
         $yamlContent = Get-Content $argoCDYamlFile -Raw
 
         $parameters = @{
-          ingressClass = ${{ inputs.ingressClass }}
-          hostName = ${{ inputs.hostName }}
-          tenantId = ${{ inputs.tenantId }}
-          ServicePrincipalClientId = ${{ inputs.ServicePrincipalClientId }}
-          SsoServicePrincipalClientSecret = ${{ inputs.SsoServicePrincipalClientSecret }}
-          AdminAadGroupId = ${{ inputs.AdminAadGroupId }}
+          ingressClass = '${{ inputs.ingressClass }}'
+          hostName = '${{ inputs.hostName }}'
+          tenantId = '${{ inputs.tenantId }}'
+          ServicePrincipalClientId = '${{ inputs.ServicePrincipalClientId }}'
+          SsoServicePrincipalClientSecret = '${{ inputs.SsoServicePrincipalClientSecret }}'
+          AdminAadGroupId = '${{ inputs.AdminAadGroupId }}'
         }
 
         foreach ($key in $parameters.Keys) {
