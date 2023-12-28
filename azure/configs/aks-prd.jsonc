@@ -132,6 +132,7 @@
     "aksClusters": [
         {
             "name": "teknologi-eur1-prd-aks",
+            "ingressClass": "nginx",
             "resourceGroupName": "teknologi-eur1-prd-aks-rg",
             "apiServerIpWhitelist": [],
             "virtualNetwork": {

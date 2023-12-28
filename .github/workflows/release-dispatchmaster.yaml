@@ -63,3 +63,13 @@ jobs:
       - name: Configure Let's Encrypt
         uses: ./.github/actions/templates/k8s-deploy-letsencrypt
         id: deploy-letsencrypt
+      - name: Configure ArgoCD
+        uses: ./.github/actions/templates/k8s-deploy-argocd
+        id: deploy-argocd
+        with:
+          ingressClass: ${{ matrix.cluster.ingressClass }}
+          hostName: ${{ matrix.cluster.argoCd.hostName }}
+          tenantId: ${{ needs.get-aks-clusters-to-configure.outputs.tenantId }}
+          ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
+          SsoServicePrincipalClientSecret: ${{ matrix.cluster.SsoServicePrincipalClientSecret }}
+          AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
