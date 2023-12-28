@@ -2,23 +2,6 @@
     "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d",
     "subscriptionId": "27e27c87-3431-4587-afa0-e36b64b597d7",
     "location": "westeurope",
-    "resourceGroups": [
-        "teknologi-eur1-prd-management-rg",
-        "teknologi-eur1-prd-infra-rg",
-        "teknologi-eur1-prd-aks-rg"
-    ],
-    "managedIdentities": [
-        {
-            "name": "teknologi-eur1-prd-management-mi",
-            "resourceGroupName": "teknologi-eur1-prd-management-rg",
-            "ownerOnResourceGroup": true
-        },
-        {
-            "name": "teknologi-eur1-prd-aks-mi",
-            "resourceGroupName": "teknologi-eur1-prd-aks-rg",
-            "ownerOnResourceGroup": true
-        }
-    ],
     "consumptionBudgets": [
         {
             "name": "teknologi-eur1-prd-budget",
@@ -30,6 +13,82 @@
                 "ashwin.sarimin@gmail.com",
                 "ashwin.sarimin@outlook.com"
             ]
+        }
+    ],
+    "resourceGroups": [
+        "teknologi-eur1-prd-management-rg",
+        "teknologi-eur1-prd-infra-rg",
+        "teknologi-eur1-prd-aks-rg"
+    ],
+    "managedIdentities": [
+        {
+            "name": "teknologi-eur1-prd-management-mi",
+            "resourceGroupName": "teknologi-eur1-prd-management-rg",
+            "ownerOnResourceGroup": false,
+            "contributorOnSubscription": true
+        },
+        {
+            "name": "teknologi-eur1-prd-aks-mi",
+            "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+            "ownerOnResourceGroup": true,
+            "contributorOnSubscription": false
+        }
+    ],
+    "dnsZones": [
+        {
+            "name": "teknologi.nl",
+            "resourceGroupName": "teknologi-eur1-prd-management-rg",
+            "deployDNSzone": true,
+            "aRecords": [
+                
+            ],
+            "txtRecords": [
+                {
+                    "recordName": "_dmarc",
+                    "recordValue": "v=DMARC1; p=none;"
+                }
+            ],
+            "cnameRecords": [
+                {
+                    "recordName": "transip-A._domainkey",
+                    "recordValue": "_dkim-A.transip.email."
+                },
+                {
+                    "recordName": "transip-B._domainkey",
+                    "recordValue": "_dkim-B.transip.email."
+                },
+                {
+                    "recordName": "transip-C._domainkey",
+                    "recordValue": "_dkim-C.transip.email."
+                }
+            ]
+        }
+    ],
+    "keyvaults": [
+        {
+          "name": "teknologi-eur1-prd-kv",
+          "resourceGroupName": "teknologi-eur1-prd-management-rg",
+          "sku": "standard",
+          "publicNetworkAccess": "Enabled",
+          "managedIdentities": [
+            {
+                "name": "teknologi-eur1-prd-management-mi",
+                "resourceGroupName": "teknologi-eur1-prd-management-rg",
+                "permissions": "manage"
+            }
+          ],
+          "aadObjects": [
+            {
+                "name": "admin@SARIMINnl.onmicrosoft.com",
+                "objectId": "ab5498ec-049a-4d72-96e9-aa435a644ef8",
+                "permissions": "manage"
+            },
+            {
+                "name": "BICEP_GITHUBACTIONS_TEKNOLOGI",
+                "objectId": "094f66a3-e47c-47dd-a8eb-1051c7aaaa71",
+                "permissions": "manage"
+            }
+          ]
         }
     ],
     "storageAccounts": [
@@ -44,7 +103,8 @@
     ],
     "deploymentScripts": [
         {
-            "name": "teknologi-eur1-prd-ds",
+            "name": "teknologi-eur1-prd-uploadblob-ds",
+            "type": "uploadBlob",
             "resourceGroupName": "teknologi-eur1-prd-management-rg",
             "kind": "AzureCLI",
             "properties": {
@@ -82,6 +142,51 @@
                     "infraResourceGroup": "teknologi-eur1-prd-infra-rg"
                 }          
             }    
+        }
+    ],
+    "staticSites": [
+        {
+            "name": "teknologi-eur1-prd-swa",
+            "resourceGroupName": "teknologi-eur1-prd-infra-rg",
+            "customDomain": {
+                "name": "teknologi.nl",
+                "resourceGroupName": "teknologi-eur1-prd-management-rg"
+            }, 
+            "sku": {
+                "name": "Free",
+                "tier": "Free"
+            },
+            "identity": {
+                "name": "teknologi-eur1-prd-management-mi",
+                "resourceGroupName": "teknologi-eur1-prd-management-rg"
+            },
+            "keyVault": {
+                "name": "teknologi-eur1-prd-kv",
+                "resourceGroupName": "teknologi-eur1-prd-management-rg"
+            }
+        }
+    ],
+    "virtualNetworks": [
+        {
+          "name": "teknologi-eur1-prd-vnet",
+          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+          "addressPrefixes": [
+              "192.168.0.0/16"
+          ],
+          "subnets": [
+              {
+                  "name": "teknologi-eur1-prd-aks-subnet",
+                  "addressPrefix": "192.168.0.0/20",
+                  "serviceEndpoints": [ 
+                      "Microsoft.KeyVault",
+                      "Microsoft.ContainerRegistry",
+                      "Microsoft.Storage"
+                  ],
+                  "delegations": [], 
+                  "networkSecurityGroup": "teknologi-eur1-prd-aks-nsg",
+                  "natGateway": ""
+              }
+          ]
         }
     ],
     "networkSecurityGroups": [
@@ -123,29 +228,6 @@
           ]
         }
     ],
-    "virtualNetworks": [
-        {
-          "name": "teknologi-eur1-prd-vnet",
-          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
-          "addressPrefixes": [
-              "192.168.0.0/16"
-          ],
-          "subnets": [
-              {
-                  "name": "teknologi-eur1-prd-aks-subnet",
-                  "addressPrefix": "192.168.0.0/20",
-                  "serviceEndpoints": [ 
-                      "Microsoft.KeyVault",
-                      "Microsoft.ContainerRegistry",
-                      "Microsoft.Storage"
-                  ],
-                  "delegations": [], 
-                  "networkSecurityGroup": "teknologi-eur1-prd-aks-nsg",
-                  "natGateway": ""
-              }
-          ]
-        }
-    ],
     "publicIPs": [
         {
           "name": "teknologi-eur1-prd-aks-ip",
@@ -153,32 +235,6 @@
           "sku": "Standard",
           "allocationMethod": "Static",
           "dnsLabelPrefix": ""
-        }
-    ],
-    "keyvaults": [
-        {
-          "name": "teknologi-eur1-prd-kv",
-          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
-          "sku": "standard",
-          "publicNetworkAccess": "Enabled",
-          "managedIdentities": [
-            {
-                "name": "teknologi-eur1-prd-aks-mi",
-                "resourceGroupName": "teknologi-eur1-prd-aks-rg",
-                "permissions": "manage"
-            }
-          ],
-          "aadObjects": [
-            {
-                "name": "admin@SARIMINnl.onmicrosoft.com",
-                "objectId": "ab5498ec-049a-4d72-96e9-aa435a644ef8",
-                "permissions": "manage"
-            }
-          ],
-          "autoGeneratedSecrets": [
-            "some-password",
-            "another-password"
-          ]
         }
     ],
     "containerRegistries": [

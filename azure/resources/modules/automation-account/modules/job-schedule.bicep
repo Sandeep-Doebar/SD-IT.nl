@@ -14,7 +14,7 @@ var identity = {
 
 resource scheduleJob 'Microsoft.Automation/automationAccounts/jobSchedules@2022-08-08' = {
   parent: automationAccount
-  name: guid(automationAccount.id, runbookName, scheduleName)
+  name: guid(runbookName, scheduleName)
   properties: {
     runbook: {
       name: runbookName

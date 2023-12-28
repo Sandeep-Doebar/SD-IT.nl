@@ -11,22 +11,24 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-
   location: location
 }
 
-resource roleAssignmentResourceGroup 'Microsoft.Authorization/roleAssignments@2022-04-01' = if(ownerOnResourceGroup == true ){
-  name: guid(managedIdentity.id, resourceGroup().id)
-  properties: {
-    principalType: 'ServicePrincipal'
+module roleAssignmentResourceGroup '../../role-assigment/main.bicep' = if(ownerOnResourceGroup == true ){
+  name: '${name}-resourcegroup-owner'
+  params: {
     principalId: managedIdentity.properties.principalId
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', ownerRoleDefinition)
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: ownerRoleDefinition
+    subscription: false
   }
 }
 
 //Contributor on subscription
-resource roleAssignmentSubscription 'Microsoft.Authorization/roleAssignments@2022-04-01' = if(contributorOnSubscription == true ){
-  name: guid(subscription().subscriptionId, managedIdentity.id, contributorRoleDefinition)
-  properties: {
-    principalType: 'ServicePrincipal'
+module roleAssignmentSubscription '../../role-assigment/main.bicep' = if(contributorOnSubscription == true ){
+  name: '${name}-subscription-contributor'
+  params: {
     principalId: managedIdentity.properties.principalId
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', contributorRoleDefinition)
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: contributorRoleDefinition
+    subscription: true
   }
 }
 

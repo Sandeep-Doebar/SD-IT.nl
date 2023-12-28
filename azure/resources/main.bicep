@@ -3,9 +3,8 @@ param location string = 'westeurope'
 
 targetScope = 'subscription'
 
-/*
 module consumptionBudgets './modules/consumption-budget/main.bicep' = [for budget in config.consumptionBudgets: {
-  name: 'main-${budget.name}'
+  name: 'deploy-${budget.name}'
   params: {
     name: budget.name
     amount: budget.amount
@@ -15,16 +14,43 @@ module consumptionBudgets './modules/consumption-budget/main.bicep' = [for budge
     contactEmails: budget.contactEmails
   }
 }]
-*/
-
 
 resource resourceGroups 'Microsoft.Resources/resourceGroups@2021-01-01' = [for rg in config.resourceGroups: {
   name: rg
   location: location
 }]
 
+module managedIdentities './modules/managed-identity/main.bicep' = [for managedIdentity in config.managedIdentities: {
+  name: 'deploy-${managedIdentity.name}'
+  scope: resourceGroup(managedIdentity.resourceGroupName)
+  params: {
+    name: managedIdentity.name
+    ownerOnResourceGroup: managedIdentity.ownerOnResourceGroup
+    contributorOnSubscription: managedIdentity.contributorOnSubscription
+    location: location
+  }
+  dependsOn:[
+    resourceGroups
+  ]
+}]
+
+module dnsZone './modules/dns-zone/main.bicep' = [for zone in config.dnsZones: {
+  name: 'deploy-${zone.name}'
+  scope: resourceGroup(zone.resourceGroupName)
+  params: {
+    dnsZoneName: zone.name
+    deployDNSzone: contains(zone, 'deployDNSzone') ? zone.deployDNSzone : false
+    aRecords: contains(zone, 'aRecords') ? zone.aRecords : []
+    txtRecords: contains(zone, 'txtRecords') ? zone.txtRecords : []
+    cnameRecords: contains(zone, 'cnameRecords') ? zone.cnameRecords : []
+  }
+  dependsOn:[
+    resourceGroups
+  ]
+}]
+
 module keyVaults './modules/keyVault/main.bicep' = [for keyvault in config.keyVaults: {
-  name: 'main-${keyvault.name}'
+  name: 'deploy-${keyvault.name}'
   scope: resourceGroup(keyvault.resourceGroupName)
   params: {
     name: keyvault.name
@@ -39,24 +65,8 @@ module keyVaults './modules/keyVault/main.bicep' = [for keyvault in config.keyVa
   ]
 }]
 
-
-module managedIdentities './modules/managed-identity/main.bicep' = [for managedIdentity in config.managedIdentities: {
-  name: 'main-${managedIdentity.name}'
-  scope: resourceGroup(managedIdentity.resourceGroupName)
-  params: {
-    name: managedIdentity.name
-    ownerOnResourceGroup: managedIdentity.ownerOnResourceGroup
-    contributorOnSubscription: managedIdentity.contributorOnSubscription
-    location: location
-  }
-  dependsOn:[
-    resourceGroups
-  ]
-}]
-
-/*
 module storageAccounts './modules/storage-account/main.bicep' = [for sa in config.storageAccounts: {
-  name: 'main-${sa.name}'
+  name: 'deploy-${sa.name}'
   scope: resourceGroup(sa.resourceGroupName)
   params: {
     name: sa.name
@@ -70,9 +80,8 @@ module storageAccounts './modules/storage-account/main.bicep' = [for sa in confi
   ]
 }]
 
-
 module deploymentScripts './modules/deployment-script/main.bicep' = [for script in config.deploymentScripts: {
-  name: 'main-${script.name}'
+  name: 'deploy-${script.name}'
   scope: resourceGroup(script.resourceGroupName)
   params: {
     name: script.name
@@ -82,17 +91,14 @@ module deploymentScripts './modules/deployment-script/main.bicep' = [for script 
     identity: (contains(script, 'identity')) ? script.identity : {}
     properties: script.properties
     storageAccount: (contains(script, 'storageAccount')) ? script.storageAccount : {}
-    servicePrincipal: (contains(script, 'servicePrincipal')) ? script.servicePrincipal : {}
   }
   dependsOn:[
     storageAccounts
   ]
 }]
-*/
 
-/*
 module automationAccount './modules/automation-account/main.bicep' = [for account in config.automationAccounts: {
-  name: 'main-${account.name}'
+  name: 'deploy-${account.name}'
   scope: resourceGroup(account.resourceGroupName)
   params: {
     name: account.name
@@ -106,20 +112,19 @@ module automationAccount './modules/automation-account/main.bicep' = [for accoun
   ]
 }]
 
-
 module staticWebApp './modules/static-site/main.bicep' = [for site in config.staticSites: {
-  name: 'main-${site.name}'
+  name: 'deploy-${site.name}'
   scope: resourceGroup(site.resourceGroupName)
   params: {
     name: site.name
     location: location
+    customDomain: site.customDomain
     sku: site.sku
     keyVault: site.keyVault
+    identity: site.identity
   }
   dependsOn:[
     resourceGroups
+    dnsZone
   ]
 }]
-*/
-
-
