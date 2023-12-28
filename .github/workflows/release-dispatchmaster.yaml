@@ -13,16 +13,39 @@ on:
         type: boolean
         required: true
         default: true
-      aks:
+      aks-infrastructure:
         type: boolean
         required: true
         default: false
-  
+      aks-configuration:
+        type: boolean
+        required: true
+        default: false  
 jobs:
   deploy-resources:
     uses: ./.github/workflows/release-deployresources.yaml
     with:
       environment: ${{ inputs.environment }}
       teknologi: ${{ inputs.teknologi }}
-      aks: ${{ inputs.aks }}
+      aks: ${{ inputs.aks-infrastructure }}
     secrets: inherit
+  get-aks-clusters-to-configure:
+    uses: ./.github/workflows/aks-get-clusters.yaml
+  configure-aks-cluster:
+    needs: get-aks-clusters-to-configure
+    if: ${{ needs.get-aks-clusters-to-configure.outputs.clusters }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cluster: ${{ fromJson(needs.get-aks-clusters-to-configure.outputs.clusters) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure Ingress Nginx
+        uses: ./.github/actions/templates/k8s-deploy-nginx-ingress
+        id: deploy-nginx-ingress
+        with: 
+          clustername: ${{ matrix.cluster.name }}
+          resourcegroup: ${{ matrix.cluster.resourceGroupName }}
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_DEVOPS }}

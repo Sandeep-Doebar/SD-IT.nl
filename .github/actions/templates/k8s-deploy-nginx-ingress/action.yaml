@@ -1,0 +1,21 @@
+name: "Deploy Azure Infra"
+
+inputs: 
+  clustername:
+    required: true
+  resourcegroup:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Azure Login
+      uses: Azure/login@v1
+      with:
+        creds: ${{ env.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true
+    - name: Get AKS context
+      id: login
+      uses: azure/aks-set-context@v3
+        cluster-name: ${{ inputs.clustername }}
+        resource-group: ${{ inputs.resourcegroup }}

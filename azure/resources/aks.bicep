@@ -14,9 +14,26 @@ module managedIdentities './modules/managed-identity/main.bicep' = [for managedI
   params: {
     name: managedIdentity.name
     ownerOnResourceGroup: managedIdentity.ownerOnResourceGroup
+    contributorOnSubscription: managedIdentity.contributorOnSubscription
     location: location
   }
   dependsOn:[
+    resourceGroups
+  ]
+}]
+
+module keyVaults './modules/keyVault/main.bicep' = [for keyvault in config.keyVaults: {
+  name: 'main-${keyvault.name}'
+  scope: resourceGroup(keyvault.resourceGroupName)
+  params: {
+    name: keyvault.name
+    sku: keyvault.sku
+    publicNetworkAccess: !(contains(keyvault, 'publicNetworkAccess')) ? 'Enabled' : keyvault.publicNetworkAccess
+    managedIdentities: keyvault.managedIdentities
+    aadObjects: keyvault.aadObjects
+    location: location
+  }
+  dependsOn: [
     resourceGroups
   ]
 }]
@@ -63,20 +80,7 @@ module publicIPs './modules/public-ip/main.bicep' = [for pip in config.publicIPs
   ]
 }]
 
-module keyVaults './modules/keyVault/main.bicep' = [for keyvault in config.keyVaults: {
-  name: 'main-${keyvault.name}'
-  scope: resourceGroup(keyvault.resourceGroupName)
-  params: {
-    name: keyvault.name
-    sku: keyvault.sku
-    publicNetworkAccess: !(contains(keyvault, 'publicNetworkAccess')) ? 'Enabled' : keyvault.publicNetworkAccess
-    managedIdentities: keyvault.managedIdentities
-    location: location
-  }
-  dependsOn: [
-    resourceGroups
-  ]
-}]
+
 
 
 module ACR './modules/container-registry/main.bicep' = [for acr in config.containerRegistries: {

@@ -1,12 +1,12 @@
 <#
 az login 
 ##Deploy Teknologi infra resources
-.\RunDeployment.ps1 -configFile "..\configs\tst.jsonc"
-.\RunDeployment.ps1 -configFile "..\configs\prd.jsonc"
+.\RunDeployment.ps1 -configFile "..\configs\main-tst.jsonc"
+.\RunDeployment.ps1 -configFile "..\configs\main-prd.jsonc"
 
 ##Deploy AKS resources
-.\RunDeployment.ps1 -configFile "..\configs\tst.jsonc" -deployAKS $true -deployMain $false
-.\RunDeployment.ps1 -configFile "..\configs\prd.jsonc" -deployAKS $true -deployMain $false
+.\RunDeployment.ps1 -configFile "..\configs\aks-tst.jsonc" -deployAKS $true -deployMain $false
+.\RunDeployment.ps1 -configFile "..\configs\aks-prd.jsonc" -deployAKS $true -deployMain $false
 #>
 
 #Parameters

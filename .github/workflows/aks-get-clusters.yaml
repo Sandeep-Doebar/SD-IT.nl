@@ -1,0 +1,36 @@
+name: Get changed modules
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+    outputs:
+      clusters:
+        value: ${{ jobs.main.outputs.clusters }}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    outputs:
+      clusters: ${{ steps.get-clusters.outputs.clusters }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Get clusters
+        id: get-clusters
+        #env:
+        #  githubToken: ${{ secrets.BICEP_GITHUBACTIONS_PAT }}
+        shell: pwsh
+        run: |
+          $environment = '${{ inputs.environment }}'
+          $configFile = "./azure/configs/aks-$environment.jsonc"
+          $jsonc = Get-Content -Path $configFile -Raw
+          $json = $jsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
+          $json | Out-File -FilePath ./configtemp.json -Encoding utf8
+          $config = Get-Content ./configtemp.json -Raw | ConvertFrom-Json #-Depth 100
+
+          Write-Output ('{0}={1}' -f 'clusters', (ConvertTo-Json @($config.aksClusters) -Compress))
+          Write-Output ('{0}={1}' -f 'clusters', (ConvertTo-Json @($config.aksClusters) -Compress)) >> $env:GITHUB_OUTPUT
+          
