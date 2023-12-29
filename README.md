@@ -38,7 +38,7 @@ The Web UI of ArgoCD provides SSO, which enables authentication and authorizatio
 2. Navigate to Azure Active Directory in the correct Tenant
 3. Create an App Registration.
 > **_NOTE:_** The callback address should be the /auth/callback endpoint of your Argo CD URL (e.g. https://argocd.example.com/auth/callback).
-4. Once created, generate a Client Secret using the menu-item `Certificates & Secretes`. Store this secret in keyVault (SsoServicePrincipalClientSecret)
+4. Once created, generate a Client Secret using the menu-item `Certificates & Secretes`. Store this secret as a GitHub Action Secret.
 5. Add `groups` group claim. This is used by ArgoCD to authorize users after they have been authenticated. Navigate to `Token configuration` and add a `groups claim`. Add the `Group ID` claim to ID and Access token.
 
 ### DNS

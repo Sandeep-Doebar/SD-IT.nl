@@ -142,8 +142,7 @@
             },
             "keyvault": {
                 "name": "teknologi-eur1-prd-kv",
-                "resourceGroupName": "teknologi-eur1-prd-management-rg",
-                "ssoSecretName": "SsoServicePrincipalClientSecret"
+                "resourceGroupName": "teknologi-eur1-prd-management-rg"
             },    
             "publicIP": {
                 "name": "teknologi-eur1-prd-aks-ip",

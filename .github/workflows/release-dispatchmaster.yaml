@@ -65,18 +65,13 @@ jobs:
           resource-group: ${{ matrix.cluster.resourceGroupName }}
           admin: 'true'
           use-kubelogin: 'false'
-      - id: keyVaultSecrets
-        uses: Azure/get-keyvault-secrets@v1
-        with: 
-          keyvault: ${{ matrix.cluster.keyvault.name }}
-          secrets: ${{ matrix.cluster.keyvault.ssoSecretName }}
       - name: Configure Ingress Nginx
         uses: ./.github/actions/templates/k8s-deploy-nginx-ingress
         id: deploy-nginx-ingress
       - name: Configure Let's Encrypt
         uses: ./.github/actions/templates/k8s-deploy-letsencrypt
         id: deploy-letsencrypt
-      - name: Configure ArgoCD
+      - name: Configure ArgoCD - Teknologi
         if: inputs.tenant == 'teknologi'
         uses: ./.github/actions/templates/k8s-deploy-argocd
         id: deploy-argocd-teknologi
@@ -87,7 +82,7 @@ jobs:
           ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
           SsoServicePrincipalClientSecret: ${{ secrets.AKS_SSO_TEKNOLOGI }}
           AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
-      - name: Configure ArgoCD
+      - name: Configure ArgoCD - Cloud
         if: inputs.tenant == 'cloud'
         uses: ./.github/actions/templates/k8s-deploy-argocd
         id: deploy-argocd-cloud
@@ -98,7 +93,7 @@ jobs:
           ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
           SsoServicePrincipalClientSecret: ${{ secrets.AKS_SSO_CLOUD }}
           AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
-      - name: Configure Prometheus
+      - name: Configure Prometheus - Teknologi
         if: inputs.tenant == 'teknologi'
         uses: ./.github/actions/templates/k8s-deploy-prometheus
         id: deploy-prometheus-teknologi
@@ -109,7 +104,7 @@ jobs:
           ServicePrincipalClientId: ${{ matrix.cluster.grafana.ServicePrincipalClientId }}
           SsoServicePrincipalClientSecret: ${{ secrets.AKS_SSO_TEKNOLOGI }}
           AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
-      - name: Configure Prometheus
+      - name: Configure Prometheus - Cloud
         if: inputs.tenant == 'cloud'
         uses: ./.github/actions/templates/k8s-deploy-prometheus
         id: deploy-prometheus-cloud
