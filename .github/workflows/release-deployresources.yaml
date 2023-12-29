@@ -6,18 +6,22 @@ on:
       environment:
         type: string
         required: true
+      tenant:
+        type: string
+        required: true
       teknologi:
         type: boolean
         required: true
-        default: true
+        default: false
       aks:
         type: boolean
         required: true
         default: false
   
 jobs:
-  DeployInfra:
-    name: "Deploy Azure Infra"
+  DeployTeknologiInfra:
+    if: inputs.tenant == 'teknologi'
+    name: "Deploy Teknologi Infra"
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
@@ -27,7 +31,25 @@ jobs:
       uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
       with:
         environment: ${{ inputs.environment }}
+        tenant: ${{ inputs.tenant }}
         teknologi: ${{ inputs.teknologi }}
         aks: ${{ inputs.aks }}
       env:
         AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}
+  DeployCloudInfra:
+    if: inputs.tenant == 'cloud'
+    name: "Deploy Cloud Infra"
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: "Deploy Azure Infra"
+      uses: ./.github/actions/templates/infrastructure-deploy-azure-resources
+      with:
+        environment: ${{ inputs.environment }}
+        tenant: ${{ inputs.tenant }}
+        teknologi: ${{ inputs.teknologi }}
+        aks: ${{ inputs.aks }}
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.BICEP_GITHUBACTIONS_CLOUD }}

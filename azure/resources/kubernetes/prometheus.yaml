@@ -1,0 +1,50 @@
+grafana:
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/ingress.class: $(ingressClass)
+      nginx.ingress.kubernetes.io/whitelist-source-range: '37.251.117.154'
+    hosts:
+      - $(hostName)
+    tls:
+      - secretName: prometheus-grafana-tls
+        hosts:
+        - $(hostName)
+  grafana.ini:
+    server:
+      root_url: https://$(hostName)
+    auth:
+      disable_login_form: true
+    auth.azuread:
+      name: Azure AD
+      enabled: true
+      allow_sign_up: true
+      client_id: $(ServicePrincipalClientId)
+      client_secret: $(SsoServicePrincipalClientSecret)
+      scopes: "openid email profile"
+      auth_url: https://login.microsoftonline.com/$(tenantId)/oauth2/v2.0/authorize
+      token_url: https://login.microsoftonline.com/$(tenantId)/oauth2/v2.0/token
+      allowed_groups: $(AdminAadGroupId)
+      allow_assign_grafana_admin: true
+
+prometheus:
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: default
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+
+defaultRules:
+  rules:
+    kubeControllerManager: false
+    kubeProxy: false
+    kubeSchedulerAlerting: false
+
+cleanPrometheusOperatorObjectNames: true

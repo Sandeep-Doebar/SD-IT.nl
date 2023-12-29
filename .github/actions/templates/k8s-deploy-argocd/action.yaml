@@ -1,0 +1,54 @@
+name: "Deploy ArgoCD"
+
+inputs: 
+  ingressClass:
+    required: true
+  hostName:
+    required: true
+  tenantId:
+    required: true
+  ServicePrincipalClientId:
+    required: true
+  SsoServicePrincipalClientSecret:
+    required: true
+  AdminAadGroupId:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Replace values in ArgoCD manifest file
+      shell: pwsh
+      run: |
+        $argoCDYamlFile = "./azure/resources/kubernetes/argocd.yaml"
+        $yamlContent = Get-Content $argoCDYamlFile -Raw
+
+        $parameters = @{
+          ingressClass = '${{ inputs.ingressClass }}'
+          hostName = '${{ inputs.hostName }}'
+          tenantId = '${{ inputs.tenantId }}'
+          ServicePrincipalClientId = '${{ inputs.ServicePrincipalClientId }}'
+          SsoServicePrincipalClientSecret = '${{ inputs.SsoServicePrincipalClientSecret }}'
+          AdminAadGroupId = '${{ inputs.AdminAadGroupId }}'
+        }
+
+        foreach ($key in $parameters.Keys) {
+          $placeholder = '$(' + $key + ')'
+          $placeholder 
+          $newValue = $parameters[$key]
+          $newValue 
+          $yamlContent = $yamlContent -replace [regex]::Escape($placeholder), $newValue
+        }
+        $yamlContent
+        $yamlContent | Set-Content $argoCDYamlFile -Force
+    - name: Configure ArgoCD
+      shell: bash
+      run: |
+        helm repo add argo https://argoproj.github.io/argo-helm
+        helm repo update
+        helm upgrade --install argocd argo/argo-cd \
+          --namespace argocd \
+          --version 5.6.0 \
+          --create-namespace \
+          --install \
+          --values ./azure/resources/kubernetes/argocd.yaml

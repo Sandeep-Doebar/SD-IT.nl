@@ -1,0 +1,54 @@
+name: "Deploy Prometheus"
+
+inputs: 
+  ingressClass:
+    required: true
+  hostName:
+    required: true
+  tenantId:
+    required: true
+  ServicePrincipalClientId:
+    required: true
+  SsoServicePrincipalClientSecret:
+    required: true
+  AdminAadGroupId:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Replace values in Prometheus manifest file
+      shell: pwsh
+      run: |
+        $prometheusYamlFile = "./azure/resources/kubernetes/prometheus.yaml"
+        $yamlContent = Get-Content $prometheusYamlFile -Raw
+
+        $parameters = @{
+          ingressClass = '${{ inputs.ingressClass }}'
+          hostName = '${{ inputs.hostName }}'
+          tenantId = '${{ inputs.tenantId }}'
+          ServicePrincipalClientId = '${{ inputs.ServicePrincipalClientId }}'
+          SsoServicePrincipalClientSecret = '${{ inputs.SsoServicePrincipalClientSecret }}'
+          AdminAadGroupId = '${{ inputs.AdminAadGroupId }}'
+        }
+
+        foreach ($key in $parameters.Keys) {
+          $placeholder = '$(' + $key + ')'
+          $placeholder 
+          $newValue = $parameters[$key]
+          $newValue 
+          $yamlContent = $yamlContent -replace [regex]::Escape($placeholder), $newValue
+        }
+        $yamlContent
+        $yamlContent | Set-Content $prometheusYamlFile -Force
+    - name: Configure Prometheus
+      shell: bash
+      run: |
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo update
+        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+          --namespace prometheus \
+          --version 45.7.1 \
+          --create-namespace \
+          --install \
+          --values ./azure/resources/kubernetes/prometheus.yaml

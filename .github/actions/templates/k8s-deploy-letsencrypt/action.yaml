@@ -1,0 +1,31 @@
+name: "Deploy Let's Encrypt"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add namespace cert-manager
+      uses: Azure/k8s-deploy@v4
+      with:
+        action: deploy
+        manifests: |
+          ./azure/resources/kubernetes/cert-manager.yaml
+    - name: Kubectl disable-validation
+      shell: bash
+      run: |
+        kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true --overwrite=true
+    - name: Configure Let's Encrypt
+      shell: bash
+      run: |
+        helm repo add jetstack https://charts.jetstack.io
+        helm repo update
+        helm upgrade --install cert-manager jetstack/cert-manager \
+          --namespace cert-manager \
+          --version 1.11.0 \
+          --install \
+          --set installCRDs=true
+    - name: Add cluster issuer
+      uses: Azure/k8s-deploy@v4
+      with:
+        action: deploy
+        manifests: |
+          ./azure/resources/kubernetes/issuer-prod.yaml

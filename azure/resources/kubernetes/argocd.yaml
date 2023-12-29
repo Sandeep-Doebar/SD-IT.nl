@@ -1,0 +1,57 @@
+## Argo CD configuration
+## Ref: https://github.com/argoproj/argo-cd
+##
+
+## Dex
+dex:
+  enabled: false
+
+## Server
+server:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: $(ingressClass)
+      cert-manager.io/issue-temporary-certificate: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      nginx.ingress.kubernetes.io/whitelist-source-range: '37.251.117.154'
+    hosts:
+      - $(hostName)
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: argocd-tls-certificate
+        hosts:
+          - $(hostName)
+    https: false
+
+  # -- Manage Argo CD configmap (Declarative Setup)
+  config:
+    url: https://$(hostName)
+    oidc.config: |
+      name: AzureAD
+      issuer: https://login.microsoftonline.com/$(TenantId)/v2.0
+      clientID: $(ServicePrincipalClientId)
+      clientSecret: $(SsoServicePrincipalClientSecret)
+      requestedIDTokenClaims:
+        groups:
+          essential: true
+      requestedScopes:
+        - openid
+        - profile
+        - email
+
+  ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/rbac.md
+  rbacConfig:
+    policy.default: role:''
+    policy.csv: |
+      g, $(AdminAadGroupId), role:admin
+  
+configs:
+  params:
+    server.insecure: true
+
+

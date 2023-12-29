@@ -156,6 +156,7 @@ resource managedCluster 'Microsoft.ContainerService/managedClusters@2022-09-01' 
 //
 module accessPolicy 'keyvault-policy.bicep' = {
   name: 'keyvault-policy'
+  scope: resourceGroup(keyvault.resourceGroupName)
   params: {
     keyvaultName: keyvault.name
     managedIdentityName: 'azurekeyvaultsecretsprovider-${name}'

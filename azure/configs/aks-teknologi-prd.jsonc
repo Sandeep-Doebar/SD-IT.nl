@@ -1,67 +1,16 @@
 {
-    "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d",
+    "tenantId": "3f632ac3-94b4-4086-be86-9f2fe39e9b0d", 
     "subscriptionId": "27e27c87-3431-4587-afa0-e36b64b597d7",
     "location": "westeurope",
-    "consumptionBudgets": [
-        {
-            "name": "teknologi-eur1-prd-budget",
-            "amount": 20,
-            "timeGrain": "Monthly",
-            "firstThreshold": 80,
-            "secondThreshold": 90,
-            "contactEmails": [
-                "ashwin.sarimin@gmail.com",
-                "ashwin.sarimin@outlook.com"
-            ]
-        }
-    ],
     "resourceGroups": [
-        "teknologi-eur1-prd-management-rg",
-        "teknologi-eur1-prd-infra-rg",
         "teknologi-eur1-prd-aks-rg"
     ],
     "managedIdentities": [
-        {
-            "name": "teknologi-eur1-prd-management-mi",
-            "resourceGroupName": "teknologi-eur1-prd-management-rg",
-            "ownerOnResourceGroup": false,
-            "contributorOnSubscription": true
-        },
         {
             "name": "teknologi-eur1-prd-aks-mi",
             "resourceGroupName": "teknologi-eur1-prd-aks-rg",
             "ownerOnResourceGroup": true,
             "contributorOnSubscription": false
-        }
-    ],
-    "dnsZones": [
-        {
-            "name": "teknologi.nl",
-            "resourceGroupName": "teknologi-eur1-prd-management-rg",
-            "deployDNSzone": true,
-            "aRecords": [
-                
-            ],
-            "txtRecords": [
-                {
-                    "recordName": "_dmarc",
-                    "recordValue": "v=DMARC1; p=none;"
-                }
-            ],
-            "cnameRecords": [
-                {
-                    "recordName": "transip-A._domainkey",
-                    "recordValue": "_dkim-A.transip.email."
-                },
-                {
-                    "recordName": "transip-B._domainkey",
-                    "recordValue": "_dkim-B.transip.email."
-                },
-                {
-                    "recordName": "transip-C._domainkey",
-                    "recordValue": "_dkim-C.transip.email."
-                }
-            ]
         }
     ],
     "keyvaults": [
@@ -72,8 +21,8 @@
           "publicNetworkAccess": "Enabled",
           "managedIdentities": [
             {
-                "name": "teknologi-eur1-prd-management-mi",
-                "resourceGroupName": "teknologi-eur1-prd-management-rg",
+                "name": "teknologi-eur1-prd-aks-mi",
+                "resourceGroupName": "teknologi-eur1-prd-aks-rg",
                 "permissions": "manage"
             }
           ],
@@ -88,104 +37,6 @@
                 "objectId": "094f66a3-e47c-47dd-a8eb-1051c7aaaa71",
                 "permissions": "manage"
             }
-          ]
-        }
-    ],
-    "storageAccounts": [
-        {
-            "name": "teknologiprdsa",
-            "resourceGroupName": "teknologi-eur1-prd-management-rg",
-            "sku": "Standard_LRS",
-            "kind": "StorageV2",   
-            "containerName": "teknologicontainer"
-            
-        }
-    ],
-    "deploymentScripts": [
-        {
-            "name": "teknologi-eur1-prd-uploadblob-ds",
-            "type": "uploadBlob",
-            "resourceGroupName": "teknologi-eur1-prd-management-rg",
-            "kind": "AzureCLI",
-            "properties": {
-                "azCliVersion": "2.26.1",
-                "timeout": "PT5M",
-                "retentionInterval": "PT1H"
-            },
-            "storageAccount": {
-                "name": "teknologiprdsa",
-                "fileName": "runbookCleanupResources.ps1",
-                "containerName": "teknologicontainer"
-            }
-        }
-    ],
-    "automationAccounts": [
-        {
-            "name": "teknologi-eur1-prd-aa",
-            "resourceGroupName": "teknologi-eur1-prd-management-rg",
-            "sku": "Free",
-            "managedIdentity":{
-                "name": "teknologi-eur1-prd-management-mi"
-            },
-            "runbook": {
-                "name": "teknologi-eur1-prd-cleanup-rb",
-                "storageAccountName": "teknologiprdsa",
-                "containerName":"teknologicontainer", 
-                "script": "runbookCleanupResources.ps1",
-                "scriptType": "PowerShell",
-                "schedule":{
-                    "name": "cleanup-daily",
-                    "frequency": "Day"
-                },
-                "parameters": {
-                    "managementResourceGroup": "teknologi-eur1-prd-management-rg",
-                    "infraResourceGroup": "teknologi-eur1-prd-infra-rg"
-                }          
-            }    
-        }
-    ],
-    "staticSites": [
-        {
-            "name": "teknologi-eur1-prd-swa",
-            "resourceGroupName": "teknologi-eur1-prd-infra-rg",
-            "customDomain": {
-                "name": "teknologi.nl",
-                "resourceGroupName": "teknologi-eur1-prd-management-rg"
-            }, 
-            "sku": {
-                "name": "Free",
-                "tier": "Free"
-            },
-            "identity": {
-                "name": "teknologi-eur1-prd-management-mi",
-                "resourceGroupName": "teknologi-eur1-prd-management-rg"
-            },
-            "keyVault": {
-                "name": "teknologi-eur1-prd-kv",
-                "resourceGroupName": "teknologi-eur1-prd-management-rg"
-            }
-        }
-    ],
-    "virtualNetworks": [
-        {
-          "name": "teknologi-eur1-prd-vnet",
-          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
-          "addressPrefixes": [
-              "192.168.0.0/16"
-          ],
-          "subnets": [
-              {
-                  "name": "teknologi-eur1-prd-aks-subnet",
-                  "addressPrefix": "192.168.0.0/20",
-                  "serviceEndpoints": [ 
-                      "Microsoft.KeyVault",
-                      "Microsoft.ContainerRegistry",
-                      "Microsoft.Storage"
-                  ],
-                  "delegations": [], 
-                  "networkSecurityGroup": "teknologi-eur1-prd-aks-nsg",
-                  "natGateway": ""
-              }
           ]
         }
     ],
@@ -228,6 +79,28 @@
           ]
         }
     ],
+    "virtualNetworks": [
+        {
+          "name": "teknologi-eur1-prd-vnet",
+          "resourceGroupName": "teknologi-eur1-prd-aks-rg",
+          "addressPrefixes": [
+              "192.168.0.0/16"
+          ],
+          "subnets": [
+              {
+                  "name": "teknologi-eur1-prd-aks-subnet",
+                  "addressPrefix": "192.168.0.0/20",
+                  "serviceEndpoints": [ 
+                      "Microsoft.KeyVault",
+                      "Microsoft.ContainerRegistry"
+                  ],
+                  "delegations": [], 
+                  "networkSecurityGroup": "teknologi-eur1-prd-aks-nsg",
+                  "natGateway": ""
+              }
+          ]
+        }
+    ],
     "publicIPs": [
         {
           "name": "teknologi-eur1-prd-aks-ip",
@@ -255,6 +128,7 @@
     "aksClusters": [
         {
             "name": "teknologi-eur1-prd-aks",
+            "ingressClass": "nginx",
             "resourceGroupName": "teknologi-eur1-prd-aks-rg",
             "apiServerIpWhitelist": [],
             "virtualNetwork": {
@@ -268,7 +142,7 @@
             },
             "keyvault": {
                 "name": "teknologi-eur1-prd-kv",
-                "resourceGroupName": "teknologi-eur1-prd-aks-rg" 
+                "resourceGroupName": "teknologi-eur1-prd-management-rg"
             },    
             "publicIP": {
                 "name": "teknologi-eur1-prd-aks-ip",
@@ -314,14 +188,14 @@
                         "sku": "Ubuntu"
                     }
                 }
-            ],    
+            ],   
             "argoCd": {
-                "hostname": "argocd.teknologi.nl",
-                "servicePrincipalClientId": "e52097d2-1a09-48c2-9009-8ecf0d2ec184"
+                "hostname": "argocd.sarimink8s.nl",
+                "servicePrincipalClientId": "82122c46-92d4-476e-98c3-915b298f4279"
             },    
             "grafana": {
-                "hostname": "grafana.teknologi.nl",
-                "servicePrincipalClientId": "e52097d2-1a09-48c2-9009-8ecf0d2ec184"
+                "hostname": "grafana.sarimink8s.nl",
+                "servicePrincipalClientId": "82122c46-92d4-476e-98c3-915b298f4279"
             }
         }
     ]

@@ -3,6 +3,8 @@ name: "Deploy Azure Infra"
 inputs: 
   environment:
     required: true
+  tenant:
+    required: true
   teknologi:
     required: true
   aks:
@@ -22,4 +24,11 @@ runs:
       with:
         azPSVersion: "latest"
         inlineScript: |
-          .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\${{ inputs.environment }}.jsonc -deployAKS $${{ inputs.aks }} -deployMain $${{ inputs.teknologi }}
+          $deployTeknologi = '${{ inputs.teknologi }}'
+          $deployAKS = '${{ inputs.aks }}'
+          if($deployTeknologi -eq 'true'){
+            .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\main-${{ inputs.tenant }}-${{ inputs.environment }}.jsonc
+          }
+          if($deployAKS -eq 'true'){
+            .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\aks-${{ inputs.tenant }}-${{ inputs.environment }}.jsonc -deployAKS $true -deployMain $false
+          }
