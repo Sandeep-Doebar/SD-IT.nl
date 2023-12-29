@@ -54,6 +54,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Azure Login
+        if: inputs.tenant == 'teknologi'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.BICEP_GITHUBACTIONS_TEKNOLOGI }}
+          enable-AzPSSession: true
+      - name: Azure Login
+        if: inputs.tenant == 'cloud'
         uses: azure/login@v1
         with:
           creds: ${{ secrets.BICEP_GITHUBACTIONS_CLOUD }}
