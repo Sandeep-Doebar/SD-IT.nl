@@ -77,22 +77,46 @@ jobs:
         uses: ./.github/actions/templates/k8s-deploy-letsencrypt
         id: deploy-letsencrypt
       - name: Configure ArgoCD
+        if: inputs.tenant == 'teknologi'
         uses: ./.github/actions/templates/k8s-deploy-argocd
-        id: deploy-argocd
+        id: deploy-argocd-teknologi
         with:
           ingressClass: ${{ matrix.cluster.ingressClass }}
           hostName: ${{ matrix.cluster.argoCd.hostName }}
           tenantId: ${{ needs.get-aks-clusters-to-configure.outputs.tenantId }}
           ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
-          SsoServicePrincipalClientSecret: ${{ steps.keyVaultSecrets.outputs.ssoSecretName  }}
+          SsoServicePrincipalClientSecret: ${{ secrets.AKS_SSO_TEKNOLOGI }}
+          AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
+      - name: Configure ArgoCD
+        if: inputs.tenant == 'cloud'
+        uses: ./.github/actions/templates/k8s-deploy-argocd
+        id: deploy-argocd-cloud
+        with:
+          ingressClass: ${{ matrix.cluster.ingressClass }}
+          hostName: ${{ matrix.cluster.argoCd.hostName }}
+          tenantId: ${{ needs.get-aks-clusters-to-configure.outputs.tenantId }}
+          ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
+          SsoServicePrincipalClientSecret: ${{ secrets.AKS_SSO_CLOUD }}
           AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
       - name: Configure Prometheus
+        if: inputs.tenant == 'teknologi'
         uses: ./.github/actions/templates/k8s-deploy-prometheus
-        id: deploy-prometheus
+        id: deploy-prometheus-teknologi
         with:
           ingressClass: ${{ matrix.cluster.ingressClass }}
-          hostName: ${{ matrix.cluster.argoCd.hostName }}
+          hostName: ${{ matrix.cluster.grafana.hostName }}
           tenantId: ${{ needs.get-aks-clusters-to-configure.outputs.tenantId }}
-          ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
-          SsoServicePrincipalClientSecret: ${{ steps.keyVaultSecrets.outputs.ssoSecretName  }}
+          ServicePrincipalClientId: ${{ matrix.cluster.grafana.ServicePrincipalClientId }}
+          SsoServicePrincipalClientSecret: ${{ secrets.AKS_SSO_TEKNOLOGI }}
+          AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
+      - name: Configure Prometheus
+        if: inputs.tenant == 'cloud'
+        uses: ./.github/actions/templates/k8s-deploy-prometheus
+        id: deploy-prometheus-cloud
+        with:
+          ingressClass: ${{ matrix.cluster.ingressClass }}
+          hostName: ${{ matrix.cluster.grafana.hostName }}
+          tenantId: ${{ needs.get-aks-clusters-to-configure.outputs.tenantId }}
+          ServicePrincipalClientId: ${{ matrix.cluster.grafana.ServicePrincipalClientId }}
+          SsoServicePrincipalClientSecret: ${{ secrets.AKS_SSO_CLOUD }}
           AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
