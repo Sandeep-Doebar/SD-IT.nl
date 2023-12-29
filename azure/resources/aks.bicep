@@ -93,6 +93,7 @@ module ACR './modules/container-registry/main.bicep' = [for acr in config.contai
    }
    dependsOn: [
     resourceGroups
+    managedIdentities
   ]
 }]
 
