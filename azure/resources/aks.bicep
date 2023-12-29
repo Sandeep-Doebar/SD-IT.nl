@@ -22,7 +22,7 @@ module managedIdentities './modules/managed-identity/main.bicep' = [for managedI
   ]
 }]
 
-module keyVaults './modules/keyVault/main.bicep' = [for keyvault in config.keyVaults: {
+module keyVaults './modules/keyvault/main.bicep' = [for keyvault in config.keyVaults: {
   name: 'main-${keyvault.name}'
   scope: resourceGroup(keyvault.resourceGroupName)
   params: {

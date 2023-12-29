@@ -26,9 +26,9 @@ runs:
         inlineScript: |
           $deployTeknologi = '${{ inputs.teknologi }}'
           $deployAKS = '${{ inputs.aks }}'
-          if($deployTeknologi){
+          if($deployTeknologi -eq 'true'){
             .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\main-${{ inputs.tenant }}-${{ inputs.environment }}.jsonc
           }
-          if($deployAKS){
+          if($deployAKS -eq 'true'){
             .\azure\resources\RunDeployment.ps1 -configFile .\azure\configs\aks-${{ inputs.tenant }}-${{ inputs.environment }}.jsonc -deployAKS $true -deployMain $false
           }
