@@ -6,6 +6,9 @@ on:
       environment:
         type: string
         required: true
+      tenant:
+        type: string
+        required: true
     outputs:
       clusters:
         value: ${{ jobs.main.outputs.clusters }}
@@ -28,7 +31,8 @@ jobs:
         shell: pwsh
         run: |
           $environment = '${{ inputs.environment }}'
-          $configFile = "./azure/configs/aks-$environment.jsonc"
+          $tenant = '${{ inputs.tenant }}'
+          $configFile = "./azure/configs/aks-$tenant-$environment.jsonc"
           $jsonc = Get-Content -Path $configFile -Raw
           $json = $jsonc -replace '(?m)(?<=^([^"]|"[^"]*")*)//.*' -replace '(?ms)/\*.*?\*/'
           $json | Out-File -FilePath ./configtemp.json -Encoding utf8

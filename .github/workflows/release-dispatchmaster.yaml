@@ -42,6 +42,7 @@ jobs:
     uses: ./.github/workflows/aks-get-clusters.yaml
     with:
       environment: ${{ inputs.environment }}
+      tenant: ${{ inputs.tenant }}
   configure-aks-cluster:
     needs: get-aks-clusters-to-configure
     if: ${{ needs.get-aks-clusters-to-configure.outputs.clusters }}
@@ -55,7 +56,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.BICEP_GITHUBACTIONS_iO }}
+          creds: ${{ secrets.BICEP_GITHUBACTIONS_CLOUD }}
           enable-AzPSSession: true
       - name: Get AKS context
         uses: azure/aks-set-context@v3
