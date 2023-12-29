@@ -86,3 +86,13 @@ jobs:
           ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
           SsoServicePrincipalClientSecret: ${{ steps.keyVaultSecrets.outputs.ssoSecretName  }}
           AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}
+      - name: Configure Prometheus
+        uses: ./.github/actions/templates/k8s-deploy-prometheus
+        id: deploy-prometheus
+        with:
+          ingressClass: ${{ matrix.cluster.ingressClass }}
+          hostName: ${{ matrix.cluster.argoCd.hostName }}
+          tenantId: ${{ needs.get-aks-clusters-to-configure.outputs.tenantId }}
+          ServicePrincipalClientId: ${{ matrix.cluster.argoCd.ServicePrincipalClientId }}
+          SsoServicePrincipalClientSecret: ${{ steps.keyVaultSecrets.outputs.ssoSecretName  }}
+          AdminAadGroupId: ${{ matrix.cluster.adminAadGroupId }}

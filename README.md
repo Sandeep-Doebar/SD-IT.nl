@@ -4,11 +4,13 @@
 
 ### TEKNOLOGI
 - BICEP_GITHUB_ACTIONS_TEKNOLOGI
+
 Contributor and User Access administrator rights on subscription
 Also used to retrieve secrets from KeyVault for the GitHub Actions workflow
 
 ## DNS
 The DNS zone teknologi.nl must have the nameservers configured to Azure DNS before deploying the infrastructure.
+
 
 # AKS
 
@@ -16,11 +18,13 @@ The DNS zone teknologi.nl must have the nameservers configured to Azure DNS befo
 
 ### TEKNOLOGI
 - BICEP_GITHUB_ACTIONS_TEKNOLOGI
+
 Owner rights on subscription
 Also used to retrieve secrets from KeyVault for the GitHub Actions workflow
 
 ### CLOUD
 - BICEP_GITHUB_ACTIONS_CLOUD
+
 Contributor and User Access administrator rights on subscription
 Also used to retrieve secrets from KeyVault for the GitHub Actions workflow
 
@@ -34,11 +38,13 @@ The Web UI of ArgoCD provides SSO, which enables authentication and authorizatio
 2. Navigate to Azure Active Directory in the correct Tenant
 3. Create an App Registration.
 > **_NOTE:_** The callback address should be the /auth/callback endpoint of your Argo CD URL (e.g. https://argocd.example.com/auth/callback).
-4. Once created, generate a Client Secret using the menu-item `Certificates & Secretes`. Store this secret on keyVault (SsoServicePrincipalClientSecret)
+4. Once created, generate a Client Secret using the menu-item `Certificates & Secretes`. Store this secret in keyVault (SsoServicePrincipalClientSecret)
 5. Add `groups` group claim. This is used by ArgoCD to authorize users after they have been authenticated. Navigate to `Token configuration` and add a `groups claim`. Add the `Group ID` claim to ID and Access token.
 
 ### DNS
 The DNS records for ArgoCD and Grafana must be setup and point to the Kubernetes API server public IP.
+
+##################################################################################################################
 
 ## Letsencrypt Certificate Manager
 For development purposes Letsencrypt can be used to automatically assign R3 certificates on specified ingresses to allow HTTPS traffic without buying a (wildcard) SSL certificate. This is done by installing the `cert-manager` Helm chart provided by Jetstack. A `ClusterIssuer` resource object is deployed which specifies Letsencrypt as the ACME server.
