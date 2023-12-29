@@ -80,9 +80,6 @@ module publicIPs './modules/public-ip/main.bicep' = [for pip in config.publicIPs
   ]
 }]
 
-
-
-
 module ACR './modules/container-registry/main.bicep' = [for acr in config.containerRegistries: {
   name: 'main-${acr.name}'
   scope: resourceGroup(acr.resourceGroupName)
@@ -94,8 +91,10 @@ module ACR './modules/container-registry/main.bicep' = [for acr in config.contai
     managedIdentities: acr.managedIdentities
     location: location
    }
+   dependsOn: [
+    resourceGroups
+  ]
 }]
-
 
 module AKS './modules/aks/main.bicep' = [for aksCluster in config.aksClusters: {
   name: 'main-${aksCluster.name}'
