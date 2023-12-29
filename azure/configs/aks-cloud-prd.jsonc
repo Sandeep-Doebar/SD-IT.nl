@@ -191,11 +191,11 @@
                 }
             ],   
             "argoCd": {
-                "hostname": "argocd.sarimink8s.nl",
+                "hostname": "argocd.cloud.sarimink8s.nl",
                 "servicePrincipalClientId": "705277dd-c190-4d53-a0b7-456b8620b131"
             },    
             "grafana": {
-                "hostname": "grafana.sarimink8s.nl",
+                "hostname": "grafana.cloud.sarimink8s.nl",
                 "servicePrincipalClientId": "705277dd-c190-4d53-a0b7-456b8620b131"
             }
         }
