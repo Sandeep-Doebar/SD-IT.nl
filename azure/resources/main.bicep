@@ -49,7 +49,7 @@ module dnsZone './modules/dns-zone/main.bicep' = [for zone in config.dnsZones: {
   ]
 }]
 
-module keyVaults './modules/keyVault/main.bicep' = [for keyvault in config.keyVaults: {
+module keyVaults './modules/keyvault/main.bicep' = [for keyvault in config.keyVaults: {
   name: 'deploy-${keyvault.name}'
   scope: resourceGroup(keyvault.resourceGroupName)
   params: {
