@@ -13,4 +13,5 @@ jobs:
       environment: prd
       teknologi: true
       aks: false
+      tenant: cloud
     secrets: inherit
